@@ -24,4 +24,9 @@ def get_card(request, card_num):
 
     return render(request, "card.html", {})
 
+def get_order(request):
+
+    return render(request, "order.html", {})
+
+
     
