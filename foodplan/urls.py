@@ -12,5 +12,6 @@ urlpatterns = [
     path('registration/', views.registration, name='registration'),
     path('lk/', views.lk, name='lk'),
     path('card<int:card>/', views.get_card, name='card'),
+    path('order/', views.get_order, name='order'),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)\
     + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
