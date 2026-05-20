@@ -1,3 +1,4 @@
+from django.contrib.auth.models import User
 from django.db import models
 
 
@@ -16,11 +17,39 @@ class MenuType(models.TextChoices):
 
 
 class SubscriptionPlan(models.Model):
-    pass
+    name = models.CharField(verbose_name='Название', max_length=50)
+    duration = models.PositiveIntegerField(
+        verbose_name='Срок подписки(месяцев)', unique=True
+    )
+    price = models.DecimalField(
+        verbose_name='Базовая цена (руб/мес)',
+        max_digits=8,
+        decimal_places=2,
+    )
+    price_coefficient = models.DecimalField(
+        verbose_name='Коэффициент цены',
+        max_digits=4,
+        decimal_places=2,
+    )
+
+    is_active = models.BooleanField(
+        verbose_name='Активен',
+        default=True,
+    )
+
+    class Meta:
+        verbose_name = 'Тарифный план'
+        verbose_name_plural = 'Тарифные планы'
+        ordering = ['duration']
+
+    def __str__(self):
+        return f'{self.name} - {self.duration} мес.'
 
 
 class Allergen(models.Model):
-    name = models.CharField('Название', max_length=50, unique=True)
+    name = models.CharField(
+        verbose_name='Название', max_length=50, unique=True
+    )
 
     class Meta:
         verbose_name = 'Аллерген'
@@ -37,6 +66,7 @@ class Recipe(models.Model):
     cooking_time = models.PositiveIntegerField(
         verbose_name='Время готовки (мин)'
     )
+    calories = models.PositiveIntegerField(verbose_name='Каллории')
 
     images = models.ImageField(
         verbose_name='Изображение', upload_to='', blank=True
@@ -81,6 +111,16 @@ class RecipeIngredient(models.Model):
     )
     ingredient = models.ForeignKey(Ingredient, on_delete=models.CASCADE)
     amount = models.PositiveIntegerField(verbose_name='Количество')
+    price = models.DecimalField(
+        verbose_name='Цена (руб)',
+        max_digits=8,
+        decimal_places=2,
+    )
+
+    class Meta:
+        verbose_name = 'Ингредиент в рецепте'
+        verbose_name_plural = 'Ингредиенты в рецептах'
+        unique_together = ('recipe', 'ingredient')
 
     def __str__(self):
         return (
@@ -89,13 +129,46 @@ class RecipeIngredient(models.Model):
         )
 
 
-class UserAccount(models.Model):
-    pass
-
-
 class Subscription(models.Model):
-    pass
+    user = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name='subscriptions'
+    )
+    plan = models.ForeignKey(
+        SubscriptionPlan,
+        on_delete=models.PROTECT,
+        related_name='selected',
+    )
+
+    menu_type = models.CharField(
+        verbose_name='Тип меню', max_length=20, choices=MenuType.choices
+    )
+    persons = models.PositiveIntegerField(verbose_name='Количество персон')
+    excluded_allergens = models.ManyToManyField(Allergen, blank=True)
+
+    started_at = models.DateTimeField(
+        verbose_name='Активирована', auto_now_add=True
+    )
+    expires_at = models.DateTimeField(verbose_name='Истекает')
+    is_active = models.BooleanField(verbose_name='Активна', default=True)
+
+    total_paid = models.DecimalField(
+        verbose_name='Оплаченная сумма',
+        max_digits=10,
+        decimal_places=2,
+    )
 
 
 class PromoCode(models.Model):
-    pass
+    code = models.CharField('Промокод', max_length=50, unique=True)
+    discount_percent = models.PositiveSmallIntegerField(
+        verbose_name='Скидка в %'
+    )
+    valid_until = models.DateTimeField(verbose_name='Действителен до')
+    is_active = models.BooleanField(verbose_name='Активен', default=True)
+
+    class Meta:
+        verbose_name = 'Промокод'
+        verbose_name_plural = 'Промокоды'
+
+    def __str__(self):
+        return f'{self.code} ({self.discount_percent}%)'
