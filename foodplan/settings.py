@@ -1,11 +1,8 @@
-import os
-from dotenv import load_dotenv
-from environs import env
 from pathlib import Path
 
+from environs import env
 
-load_dotenv()
-
+env.read_env()
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -43,7 +40,7 @@ ROOT_URLCONF = 'foodplan.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'templates')],
+        'DIRS': [BASE_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
