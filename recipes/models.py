@@ -60,23 +60,31 @@ class Allergen(models.Model):
 
 
 class Recipe(models.Model):
-    name = models.CharField(max_length=200, verbose_name='Название')
+    name = models.CharField(
+        max_length=200, verbose_name='Название', db_index=True
+    )
     description = models.TextField(verbose_name='Описание')
     instruction = models.TextField(verbose_name='Инструкция')
     cooking_time = models.PositiveIntegerField(
         verbose_name='Время готовки (мин)'
     )
-    calories = models.PositiveIntegerField(verbose_name='Каллории')
+    calories = models.PositiveIntegerField(verbose_name='Калории')
 
     images = models.ImageField(
         verbose_name='Изображение', upload_to='', blank=True
     )
 
     food_type = models.CharField(
-        verbose_name='Тип еды', max_length=20, choices=FoodType.choices
+        verbose_name='Тип еды',
+        max_length=20,
+        choices=FoodType.choices,
+        db_index=True,
     )
     menu_type = models.CharField(
-        verbose_name='Тип меню', max_length=20, choices=MenuType.choices
+        verbose_name='Тип меню',
+        max_length=20,
+        choices=MenuType.choices,
+        db_index=True,
     )
 
     allergens = models.ManyToManyField(
@@ -140,7 +148,10 @@ class Subscription(models.Model):
     )
 
     menu_type = models.CharField(
-        verbose_name='Тип меню', max_length=20, choices=MenuType.choices
+        verbose_name='Тип меню',
+        max_length=20,
+        choices=MenuType.choices,
+        db_index=True,
     )
     persons = models.PositiveIntegerField(verbose_name='Количество персон')
     excluded_allergens = models.ManyToManyField(Allergen, blank=True)
@@ -157,6 +168,13 @@ class Subscription(models.Model):
         decimal_places=2,
     )
 
+    class Meta:
+        verbose_name = 'Подписка'
+        verbose_name_plural = 'Подписки'
+
+    def __str__(self):
+        return f'{self.user.username} - {self.plan.name} ({self.expires_at.date()})'
+
 
 class PromoCode(models.Model):
     code = models.CharField('Промокод', max_length=50, unique=True)
@@ -165,6 +183,9 @@ class PromoCode(models.Model):
     )
     valid_until = models.DateTimeField(verbose_name='Действителен до')
     is_active = models.BooleanField(verbose_name='Активен', default=True)
+    max_uses = models.PositiveIntegerField(
+        verbose_name='Максимум использований', default=1
+    )
 
     class Meta:
         verbose_name = 'Промокод'
