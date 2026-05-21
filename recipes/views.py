@@ -2,6 +2,13 @@ from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect, render
 from django.views.decorators.http import require_POST
+from .models import (
+    Recipe,
+    Ingredient,
+    RecipeIngredient,
+    SubscriptionPlan,
+    Subscription
+)
 
 from .forms import LoginForm, RegistrationForm
 
@@ -47,13 +54,29 @@ def logout_user(request):
     logout(request)
     return redirect('home')
 
-def get_card(request, card_num):
+def get_card(request):
+    recipes = Recipe.objects.all()[:3]
+    recipes_for_card = []
+    for recipe in recipes:
+        recipe_for_card = {}
+        all_calories = 0
+        recipe_for_card['name'] = recipe.name
+        recipe_for_card['ingredients'] = recipe.ingredients.all()
+        all_calories = Recipe.objects.get(id = recipe.id).calories
+        recipe_for_card['all_calories'] = all_calories
+        recipe_for_card['images'] = recipe.images.url
+        recipe_for_card['instruction'] = recipe.instruction
+        recipes_for_card.append(recipe_for_card)
 
-    return render(request, "card.html", {})
+
+
+    return render(request, "card.html", {"recipes_for_card":recipes_for_card})
 
 def get_order(request):
 
     return render(request, "order.html", {})
+
+
 
 
     

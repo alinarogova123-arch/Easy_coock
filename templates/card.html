@@ -17,36 +17,37 @@
         <nav class="navbar navbar-expand-md navbar-light fixed-top navbar__opacity">
             <div class="container">
                 <a class="navbar-brand" href="{% url 'home' %}">
-                    <img src="./../media/img/logo.8d8f24edbb5f.svg" height="55" width="189" alt="">
+                    <img src="./../media/img/logo.8d8f24edbb5f.svg" height="55" width="189" alt="изображение блюда">
                 </a>
-                <button class="btn btn-outline-success me-2 shadow-none foodplan_green foodplan__border_green">Назад</button>
+                <a class="btn btn-outline-success me-2 shadow-none foodplan_green foodplan__border_green" href="{% url 'lk'}">Назад</a>
             </div>
         </nav>
     </header>
+{% for recipe in recipes_for_card %}
     <main style="margin-top: calc(2rem + 75px);">
         <section>
             <div class="container">
                 <div class="row">
                     <div class="col-12 col-md-4 d-flex justify-content-center">
                         <div class="card foodplan__card_borderless">
-                            <img src="./../media/img/circle1.png" alt="">
+                            <img src= "./..{{recipe.images}}" alt="">
                         </div>
                     </div>
                     <div class="col-12 col-md-6 d-flex flex-column justify-content-between">
-                        <h2>Название рецепта</h2>
+                        <h2>{{recipe.name}}</h2>
                         <ul class="list-group list-group-flush">
-                            <li class="list-group-item">ингредиент (500г.)</li>
-                            <li class="list-group-item">ингредиент (500г.)</li>
-                            <li class="list-group-item">ингредиент (500г.)</li>
-                            <li class="list-group-item">ингредиент (500г.)</li>
-                            <li class="list-group-item">ингредиент (500г.)</li>
-                        </ul>
-                        <h6>Общая калорийность: 1000 ккал</h6>
+                        {% for ingredient in recipe.ingredients %}
+                            <li class="list-group-item">{{ingredient.ingredient}} {{ingredient.amount}}{{ingredient.ingredient.unit}}</li>
+                        {% endfor %}
+                        </ul><br>
+                        <h6>Общая калорийность: {{recipe.all_calories}} ккал</h6>
                     </div>
+                    <h6>Инструкция:<br>{{recipe.instruction}}</h6>
                 </div>
             </div>
         </section>
     </main>
+{% endfor %}
     <footer>
         <nav class="navbar navbar-expand-md navbar-light mt-5">
             <div class="container p-2">
@@ -54,8 +55,8 @@
                     <img src="./../media/img/logo.8d8f24edbb5f.svg" height="55" width="189" alt="">
                 </a>
                 <div class="footer__sideBtns d-flex">
-                    <a href="#">
-                        <img src="./../media/img/vk.png" height="38" width="auto" alt="">
+                    <a href="https://vk.com/devmanorg">
+                        <img src="./../media/img/vk.png" height="38" width="auto" alt="логотип вк">
                     </a>
                 </div>
             </div>
