@@ -31,29 +31,44 @@ class IngredientAdmin(admin.ModelAdmin):
 
 @admin.register(PromoCode)
 class PromoCodeAdmin(admin.ModelAdmin):
-    list_display = ['code', 'discount_percent', 'valid_until', 'is_active']
+    list_display = [
+        'code',
+        'discount_percent',
+        'valid_until',
+        'is_active',
+        'max_uses',
+        'used_count',
+    ]
     list_filter = ['is_active']
     search_fields = ['code']
 
 
 @admin.register(Subscription)
 class SubscriptionAdmin(admin.ModelAdmin):
-    list_display = ['user', 'plan', 'persons', 'is_active', 'expires_at']
-    list_filter = ['is_active', 'plan']
+    list_display = ['user', 'plan', 'persons', 'status', 'expires_at']
+    list_filter = ['status', 'plan']
     search_fields = ['user__username', 'user__email']
     raw_id_fields = ['user']
-    readonly_fields = ['started_at']
+    readonly_fields = ['created_at', 'activated_at']
     filter_horizontal = ['excluded_allergens']
     fields = [
         'user',
         'plan',
         'menu_type',
         'persons',
+        'has_breakfast',
+        'has_lunch',
+        'has_dinner',
+        'has_dessert',
         'excluded_allergens',
-        'started_at',
+        'status',
+        'created_at',
+        'activated_at',
         'expires_at',
+        'promo_code',
+        'total_before_discount',
+        'discount_amount',
         'total_paid',
-        'is_active',
     ]
 
 

@@ -1,5 +1,7 @@
-from django.contrib.auth.models import User
+from django.conf import settings
+from django.core.exceptions import ValidationError
 from django.db import models
+from django.utils import timezone
 
 
 class FoodType(models.TextChoices):
@@ -14,6 +16,13 @@ class MenuType(models.TextChoices):
     VEGAN = 'vegan', 'Веганское'
     KETO = 'keto', 'Кето диета'
     LOW_CARB = 'low_carb', 'Низкоуглеводное'
+
+
+class SubscriptionStatus(models.TextChoices):
+    PENDING = 'pending', 'Ожидает активации'
+    ACTIVE = 'active', 'Активна'
+    EXPIRED = 'expired', 'Истекла'
+    CANCELLED = 'cancelled', 'Отменена'
 
 
 class SubscriptionPlan(models.Model):
@@ -139,7 +148,9 @@ class RecipeIngredient(models.Model):
 
 class Subscription(models.Model):
     user = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name='subscriptions'
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='subscriptions',
     )
     plan = models.ForeignKey(
         SubscriptionPlan,
@@ -156,16 +167,60 @@ class Subscription(models.Model):
     persons = models.PositiveIntegerField(verbose_name='Количество персон')
     excluded_allergens = models.ManyToManyField(Allergen, blank=True)
 
-    started_at = models.DateTimeField(
-        verbose_name='Активирована', auto_now_add=True
-    )
-    expires_at = models.DateTimeField(verbose_name='Истекает')
-    is_active = models.BooleanField(verbose_name='Активна', default=True)
+    has_breakfast = models.BooleanField(verbose_name='Завтраки', default=False)
+    has_lunch = models.BooleanField(verbose_name='Обеды', default=False)
+    has_dinner = models.BooleanField(verbose_name='Ужины', default=False)
+    has_dessert = models.BooleanField(verbose_name='Десерты', default=False)
 
-    total_paid = models.DecimalField(
-        verbose_name='Оплаченная сумма',
+    status = models.CharField(
+        verbose_name='Статус',
+        max_length=20,
+        choices=SubscriptionStatus.choices,
+        default=SubscriptionStatus.PENDING,
+        db_index=True,
+    )
+    created_at = models.DateTimeField(
+        verbose_name='Создана',
+        default=timezone.now,
+        editable=False,
+    )
+    activated_at = models.DateTimeField(
+        verbose_name='Активирована',
+        null=True,
+        blank=True,
+    )
+    expires_at = models.DateTimeField(
+        verbose_name='Истекает',
+        null=True,
+        blank=True,
+    )
+
+    promo_code = models.ForeignKey(
+        'PromoCode',
+        on_delete=models.PROTECT,
+        verbose_name='Промокод',
+        related_name='subscriptions',
+        null=True,
+        blank=True,
+    )
+    total_before_discount = models.DecimalField(
+        verbose_name='Стоимость до скидки',
         max_digits=10,
         decimal_places=2,
+        default=0,
+    )
+    discount_amount = models.DecimalField(
+        verbose_name='Скидка',
+        max_digits=10,
+        decimal_places=2,
+        default=0,
+    )
+
+    total_paid = models.DecimalField(
+        verbose_name='Итоговая сумма',
+        max_digits=10,
+        decimal_places=2,
+        default=0,
     )
 
     class Meta:
@@ -173,7 +228,27 @@ class Subscription(models.Model):
         verbose_name_plural = 'Подписки'
 
     def __str__(self):
-        return f'{self.user.username} - {self.plan.name} ({self.expires_at.date()})'
+        return f'{self.user.username} - {self.plan.name} ({self.get_status_display()})'
+
+    @property
+    def selected_food_types(self):
+        selected_types = []
+        if self.has_breakfast:
+            selected_types.append(FoodType.BREAKFAST)
+        if self.has_lunch:
+            selected_types.append(FoodType.LUNCH)
+        if self.has_dinner:
+            selected_types.append(FoodType.DINNER)
+        if self.has_dessert:
+            selected_types.append(FoodType.DESSERT)
+        return selected_types
+
+    def clean(self):
+        super().clean()
+        if not self.selected_food_types:
+            raise ValidationError(
+                'Выберите хотя бы один приём пищи для подписки.'
+            )
 
 
 class PromoCode(models.Model):
@@ -185,6 +260,9 @@ class PromoCode(models.Model):
     is_active = models.BooleanField(verbose_name='Активен', default=True)
     max_uses = models.PositiveIntegerField(
         verbose_name='Максимум использований', default=1
+    )
+    used_count = models.PositiveIntegerField(
+        verbose_name='Использовано', default=0
     )
 
     class Meta:
