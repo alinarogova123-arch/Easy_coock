@@ -65,6 +65,7 @@ def get_card(request):
         all_calories = Recipe.objects.get(id = recipe.id).calories
         recipe_for_card['all_calories'] = all_calories
         recipe_for_card['images'] = recipe.images.url
+        recipe_for_card['instruction'] = recipe.instruction
         recipes_for_card.append(recipe_for_card)
 
 
