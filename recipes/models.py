@@ -285,3 +285,53 @@ class PromoCode(models.Model):
             )
         if errors:
             raise ValidationError(errors)
+
+
+class DailyMenu(models.Model):
+    subscription = models.ForeignKey(
+        Subscription,
+        on_delete=models.CASCADE,
+        related_name='daily_menus',
+        verbose_name='Подписка',
+    )
+    date = models.DateField(
+        verbose_name='Дата', default=timezone.now, db_index=True
+    )
+
+    breakfast = models.ForeignKey(
+        Recipe,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='+',
+        limit_choices_to={'food_type': FoodType.BREAKFAST},
+    )
+    lunch = models.ForeignKey(
+        Recipe,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='+',
+        limit_choices_to={'food_type': FoodType.LUNCH},
+    )
+    dinner = models.ForeignKey(
+        Recipe,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='+',
+        limit_choices_to={'food_type': FoodType.DINNER},
+    )
+    dessert = models.ForeignKey(
+        Recipe,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='+',
+        limit_choices_to={'food_type': FoodType.DESSERT},
+    )
+
+    class Meta:
+        verbose_name = ('Ежедневное меню',)
+        verbose_name_plural = ('Ежедневные меню',)
+        unique_together = ('subscription', 'date')
