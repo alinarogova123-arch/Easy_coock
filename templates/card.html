@@ -19,10 +19,11 @@
                 <a class="navbar-brand" href="{% url 'home' %}">
                     <img src="./../media/img/logo.8d8f24edbb5f.svg" height="55" width="189" alt="">
                 </a>
-                <button class="btn btn-outline-success me-2 shadow-none foodplan_green foodplan__border_green">Назад</button>
+                <a class="btn btn-outline-success me-2 shadow-none foodplan_green foodplan__border_green" href="{% url 'lk'}">Назад</a>
             </div>
         </nav>
     </header>
+{% for recipe in recipes %}
     <main style="margin-top: calc(2rem + 75px);">
         <section>
             <div class="container">
@@ -33,20 +34,19 @@
                         </div>
                     </div>
                     <div class="col-12 col-md-6 d-flex flex-column justify-content-between">
-                        <h2>Название рецепта</h2>
+                        <h2>{{recipe_name}}</h2>
                         <ul class="list-group list-group-flush">
-                            <li class="list-group-item">ингредиент (500г.)</li>
-                            <li class="list-group-item">ингредиент (500г.)</li>
-                            <li class="list-group-item">ингредиент (500г.)</li>
-                            <li class="list-group-item">ингредиент (500г.)</li>
-                            <li class="list-group-item">ингредиент (500г.)</li>
+                        {% for ingredient in ingredients %}
+                            <li class="list-group-item">{{ingredient}} {{quantity}}{{measurement_unit}}</li>
+                        {% endfor %}
                         </ul>
-                        <h6>Общая калорийность: 1000 ккал</h6>
+                        <h6>Общая калорийность: {{calories_quantity}} ккал</h6>
                     </div>
                 </div>
             </div>
         </section>
     </main>
+{% endfor %}
     <footer>
         <nav class="navbar navbar-expand-md navbar-light mt-5">
             <div class="container p-2">

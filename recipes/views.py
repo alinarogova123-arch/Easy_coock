@@ -2,6 +2,13 @@ from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect, render
 from django.views.decorators.http import require_POST
+from .models import (
+    Recipe,
+    Ingredient,
+    RecipeIngredient,
+    SubscriptionPlan,
+    Subscription
+)
 
 from .forms import LoginForm, RegistrationForm
 
@@ -47,13 +54,16 @@ def logout_user(request):
     logout(request)
     return redirect('home')
 
-def get_card(request, card_num):
+def get_card(request):
+    user_id = request.user.id
 
     return render(request, "card.html", {})
 
 def get_order(request):
 
     return render(request, "order.html", {})
+
+
 
 
     
