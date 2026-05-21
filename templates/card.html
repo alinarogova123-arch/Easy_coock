@@ -17,7 +17,7 @@
         <nav class="navbar navbar-expand-md navbar-light fixed-top navbar__opacity">
             <div class="container">
                 <a class="navbar-brand" href="{% url 'home' %}">
-                    <img src="./../media/img/logo.8d8f24edbb5f.svg" height="55" width="189" alt="">
+                    <img src="./../media/img/logo.8d8f24edbb5f.svg" height="55" width="189" alt="изображение блюда">
                 </a>
                 <a class="btn btn-outline-success me-2 shadow-none foodplan_green foodplan__border_green" href="{% url 'lk'}">Назад</a>
             </div>
@@ -37,13 +37,12 @@
                         <h2>{{recipe.name}}</h2>
                         <ul class="list-group list-group-flush">
                         {% for ingredient in recipe.ingredients %}
-                            <li class="list-group-item">{{ingredient.ingredient}}{{ingredient.amount}}</li>
+                            <li class="list-group-item">{{ingredient.ingredient}} {{ingredient.amount}}{{ingredient.ingredient.unit}}</li>
                         {% endfor %}
-                        </ul>
+                        </ul><br>
                         <h6>Общая калорийность: {{recipe.all_calories}} ккал</h6>
                     </div>
-                    <h6>Инструкция:
-                    {{recipe.instruction}}</h6>
+                    <h6>Инструкция:<br>{{recipe.instruction}}</h6>
                 </div>
             </div>
         </section>
@@ -56,8 +55,8 @@
                     <img src="./../media/img/logo.8d8f24edbb5f.svg" height="55" width="189" alt="">
                 </a>
                 <div class="footer__sideBtns d-flex">
-                    <a href="#">
-                        <img src="./../media/img/vk.png" height="38" width="auto" alt="">
+                    <a href="https://vk.com/devmanorg">
+                        <img src="./../media/img/vk.png" height="38" width="auto" alt="логотип вк">
                     </a>
                 </div>
             </div>
