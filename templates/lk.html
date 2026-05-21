@@ -9,7 +9,10 @@
                 <a class="navbar-brand" href="{% url 'home'%}">
                     <img src="./../media/img/logo.8d8f24edbb5f.svg" height="55" width="189" alt="">
                 </a>
-                <a class="btn btn-outline-success shadow-none foodplan_green foodplan__border_green" href="{% url 'home'%}">Выйти</a>
+                <form method="post" action="{% url 'logout' %}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-outline-success shadow-none foodplan_green foodplan__border_green">Выйти</button>
+                </form>
             </div>
         </nav>
     </header>
@@ -30,9 +33,12 @@
                             <span class="badge rounded-circle position-absolute bottom-0 end-0 foodplan__bg_green avatar__plus"><a href="#"
                                     class="link-dark text-decoration-none align-middle">+</a></span>
                         </div>
-                        <h3 class="card-title text-center">Tim</h3>
+                        <h3 class="card-title text-center">{{ request.user.username }}</h3>
                         <div class="d-block">
-                            <a class="btn btn-outline-success shadow-none foodplan_green foodplan__border_green" href="{% url 'home'%}">Выйти</a>
+                            <form method="post" action="{% url 'logout' %}">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-outline-success shadow-none foodplan_green foodplan__border_green">Выйти</button>
+                            </form>
                         </div>
                     </div>
 
@@ -130,7 +136,7 @@
                     <img src="./../media/img/logo.8d8f24edbb5f.svg" height="55" width="189" alt="">
                 </a>
                 <div class="footer__sideBtns d-flex">
-                    <a href="https://vk.com/devmanorg">
+                    <a href="#">
                         <img src="./../media/img/vk.png" height="38" width="auto" alt="">
                     </a>
                 </div>
