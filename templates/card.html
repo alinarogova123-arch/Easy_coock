@@ -23,24 +23,24 @@
             </div>
         </nav>
     </header>
-{% for recipe in recipes %}
+{% for recipe in recipes_for_card %}
     <main style="margin-top: calc(2rem + 75px);">
         <section>
             <div class="container">
                 <div class="row">
                     <div class="col-12 col-md-4 d-flex justify-content-center">
                         <div class="card foodplan__card_borderless">
-                            <img src="./../media/img/circle1.png" alt="">
+                            <img src= "./..{{recipe.images}}" alt="">
                         </div>
                     </div>
                     <div class="col-12 col-md-6 d-flex flex-column justify-content-between">
-                        <h2>{{recipe_name}}</h2>
+                        <h2>{{recipe.name}}</h2>
                         <ul class="list-group list-group-flush">
-                        {% for ingredient in ingredients %}
-                            <li class="list-group-item">{{ingredient}} {{quantity}}{{measurement_unit}}</li>
+                        {% for ingredient in recipe.ingredients %}
+                            <li class="list-group-item">{{ingredient.ingredient}}{{ingredient.amount}}</li>
                         {% endfor %}
                         </ul>
-                        <h6>Общая калорийность: {{calories_quantity}} ккал</h6>
+                        <h6>Общая калорийность: {{recipe.all_calories}} ккал</h6>
                     </div>
                 </div>
             </div>
