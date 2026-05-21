@@ -1,4 +1,7 @@
-from django.shortcuts import render
+from django.contrib.auth import login
+from django.shortcuts import redirect, render
+
+from .forms import RegistrationForm
 
 
 def index(request):
@@ -12,8 +15,16 @@ def authentication(request):
 
 
 def registration(request):
+    if request.method == 'POST':
+        form = RegistrationForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            login(request, user)
+            return redirect('order')
+    else:
+        form = RegistrationForm()
 
-    return render(request, "registration.html", {})
+    return render(request, "registration.html", {'form': form})
 
 
 def lk(request):
