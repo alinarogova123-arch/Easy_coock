@@ -1,7 +1,9 @@
-from django.contrib.auth import login
+from django.contrib.auth import login, logout
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect, render
+from django.views.decorators.http import require_POST
 
-from .forms import RegistrationForm
+from .forms import LoginForm, RegistrationForm
 
 
 def index(request):
@@ -10,8 +12,15 @@ def index(request):
 
 
 def authentication(request):
+    if request.method == 'POST':
+        form = LoginForm(request, request.POST)
+        if form.is_valid():
+            login(request, form.get_user())
+            return redirect('lk')
+    else:
+        form = LoginForm()
 
-    return render(request, "auth.html", {})
+    return render(request, "auth.html", {'form': form})
 
 
 def registration(request):
@@ -27,9 +36,16 @@ def registration(request):
     return render(request, "registration.html", {'form': form})
 
 
+@login_required(login_url='auth')
 def lk(request):
 
     return render(request, "lk.html", {})
+
+
+@require_POST
+def logout_user(request):
+    logout(request)
+    return redirect('home')
 
 def get_card(request, card_num):
 
