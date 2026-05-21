@@ -271,3 +271,17 @@ class PromoCode(models.Model):
 
     def __str__(self):
         return f'{self.code} ({self.discount_percent}%)'
+
+    def clean(self):
+        super().clean()
+        errors = {}
+        if not 1 <= self.discount_percent <= 100:
+            errors['discount_percent'] = 'Скидка должна быть от 1 до 100%.'
+        if self.max_uses < 1:
+            errors['max_uses'] = 'Максимум использований должен быть больше 0.'
+        if self.used_count > self.max_uses:
+            errors['used_count'] = (
+                'Использований не может быть больше максимального лимита.'
+            )
+        if errors:
+            raise ValidationError(errors)
