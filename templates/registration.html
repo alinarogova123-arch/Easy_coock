@@ -2,6 +2,7 @@
 
 {% block title %}Foodplan 2026 - Меню на неделю FOODPLAN{% endblock %}
 {% block content %}
+{% load static %}
 <body>
     <header>
         <nav class="navbar navbar-expand-md navbar-light fixed-top navbar__opacity">
@@ -109,6 +110,14 @@
                             <div class="col-12 col-sm-6 mt-3 d-flex justify-content-center align-items-center">
                                 <small>Уже есть аккаунт? <a href="{% url 'auth' %}" class="link-dark foodplan_green">Войти</a></small>
                             </div>
+                        </div>
+                        <div class="d-flex justify-content-start" style="margin-top: 20px";>Прочитайте и подтвердите согласие на обработку        персональных данных и условия работы с сервисом.
+                        </div>
+                        <div class="d-flex justify-content-start" style="margin-top: 20px; margin-left: 20px;">
+                            <input class="form-check-input me-1 foodplan_checked-green" type="checkbox"><h6 class="     link-secondary text-center"><a href="{% static 'pd_agreement.pdf' %}" class="link-secondary     me-2">Политика конфиденциальности</a>
+                        </div>
+                        <div class="d-flex justify-content-start" style="margin-top: 10px; margin-bottom: 10px; margin-left: 20px;">
+                            <input class="form-check-input me-1 foodplan_checked-green" type="checkbox"><h6 class="     link-secondary text-center"><a href="{% static 'Пользовательское соглашение.pdf' %}" class="    link-secondary me-2">Пользовательское соглашение</a>
                         </div>
                     </form>
                 </div>
