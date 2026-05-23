@@ -330,3 +330,45 @@ class DailyMenu(models.Model):
         verbose_name = 'Ежедневное меню'
         verbose_name_plural = 'Ежедневные меню'
         unique_together = ('subscription', 'date')
+
+
+class Comment(models.Model):
+    recipe = models.ForeignKey(
+        Recipe,
+        on_delete=models.CASCADE,
+        related_name='comments',
+        verbose_name='Рецепт',
+    )
+    author = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='recipe_comments',
+        verbose_name='Автор',
+    )
+    text = models.TextField(verbose_name='Комментарий')
+    rating = models.PositiveSmallIntegerField(
+        verbose_name='Оценка',
+        choices=[
+            (1, '★☆☆☆☆'),
+            (2, '★★☆☆☆'),
+            (3, '★★★☆☆'),
+            (4, '★★★★☆'),
+            (5, '★★★★★'),
+        ],
+    )
+    created_at = models.DateTimeField(
+        verbose_name='Дата создания',
+        auto_now_add=True,
+        db_index=True,
+    )
+    is_approved = models.BooleanField(
+        verbose_name='Одобрен',
+    )
+
+    class Meta:
+        verbose_name = 'Комментарий'
+        verbose_name_plural = 'Комментарии'
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f'{self.author.username}: {self.text[:30]}...'

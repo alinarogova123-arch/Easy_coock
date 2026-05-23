@@ -4,6 +4,7 @@ from django.utils.html import format_html
 
 from .models import (
     Allergen,
+    Comment,
     Ingredient,
     PromoCode,
     Recipe,
@@ -205,3 +206,12 @@ class RecipeAdmin(admin.ModelAdmin):
             return format_html(
                 '<img src="{}" style="max-width: 200px;" />', obj.images.url
             )
+
+
+@admin.register(Comment)
+class CommentAdmin(admin.ModelAdmin):
+    list_display = ['author', 'recipe', 'rating', 'created_at', 'is_approved']
+    list_filter = ['is_approved', 'rating', 'created_at']
+    search_fields = ['author__username', 'recipe__name', 'text']
+    list_editable = ['is_approved']
+    readonly_fields = ['created_at']
