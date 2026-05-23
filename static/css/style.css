@@ -45,12 +45,7 @@ body {
 .foodplan_selected:checked ~ .img_selected {
     display: block;
 }
-.foodplan_selected1:hover ~ .img_selected {
-    display: block;
-    border: none;
-    box-shadow: 0 0 30px #91B93E;
-}
-.foodplan_selected:hover:not(.foodplan_selected:checked)~.img_selected {
+.menu-type-card:hover .img_selected {
     display: block;
     border: none;
     box-shadow: 0 0 15px #91B93E;

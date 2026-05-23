@@ -48,32 +48,32 @@
                 <div class="row mb-5">
                     <div class="col-6 col-md-3">
                         
-                        <label for="classic" class="position-relative" style="cursor: pointer;">
-                            <img src="img/menu_classical.png" alt="" class="w-100">
+                        <label for="classic" class="position-relative menu-type-card" style="cursor: pointer;">
+                            <img src="{% static 'images/menu_classical.png' %}" alt="" class="w-100">
                             <input form="order" type="radio" name="menu_type" id="classic" value="classic" class="foodplan_selected d-none" {% if order_values.menu_type == 'classic' %}checked{% endif %}>
                             <div class="img_selected" id="img1"></div>
                         </label>
                     </div>
                     <div class="col-6 col-md-3">
                         
-                        <label for="low" class="position-relative" style="cursor: pointer;">
-                            <img src="./../media/img/menu_nizkougl.png" alt="" class="w-100">
+                        <label for="low" class="position-relative menu-type-card" style="cursor: pointer;">
+                            <img src="{% static 'images/menu_nizkougl.png' %}" alt="" class="w-100">
                             <input form="order" type="radio" name="menu_type" id="low" value="low_carb" class="foodplan_selected d-none" {% if order_values.menu_type == 'low_carb' %}checked{% endif %}>
                             <div class="img_selected" id="img2"></div>
                         </label>
                     </div>
                     <div class="col-6 col-md-3">
                         
-                        <label for="veg" class="position-relative" style="cursor: pointer;">
-                            <img src="./../media/img/menu_veg.png" alt="" class="w-100">
+                        <label for="veg" class="position-relative menu-type-card" style="cursor: pointer;">
+                            <img src="{% static 'images/menu_veg.png' %}" alt="" class="w-100">
                             <input form="order" type="radio" name="menu_type" id="veg" value="vegan" class="foodplan_selected d-none" {% if order_values.menu_type == 'vegan' %}checked{% endif %}>
-                            <div class="./../media/img_selected" id="img3"></div>
+                            <div class="img_selected" id="img3"></div>
                         </label>
                     </div>
                     <div class="col-6 col-md-3">
                         
-                        <label for="keto" class="position-relative" style="cursor: pointer;">
-                            <img src="./../media/img/menu_keto.png" alt="" class="w-100">
+                        <label for="keto" class="position-relative menu-type-card" style="cursor: pointer;">
+                            <img src="{% static 'images/menu_keto.png' %}" alt="" class="w-100">
                             <input form="order" type="radio" name="menu_type" id="keto" value="keto" class="foodplan_selected d-none" {% if order_values.menu_type == 'keto' %}checked{% endif %}>
                             <div class="img_selected" id="img4"></div>
                         </label>
