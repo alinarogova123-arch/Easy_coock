@@ -13,7 +13,6 @@ urlpatterns = (
         path('logout/', views.logout_user, name='logout'),
         path('registration/', views.registration, name='registration'),
         path('lk/', views.lk, name='lk'),
-        path('card/', views.get_card, name='card'),
         path('order/', views.get_order, name='order'),
         path(
             'subscription/<int:subscription_id>/menu/',
