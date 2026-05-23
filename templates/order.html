@@ -28,12 +28,29 @@
             <div class="container">
                 <h1><strong class="foodplan_green">1 шаг </strong>до первого меню</h1>
                 <h5 class="text-secondary mb-3">Вам будет доступно 4 типа меню: Классическое, Низкоуглеводное, Вегетарианское и Кето.</h5>
+                {% for message in messages %}
+                    <div class="alert alert-success" role="alert">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+                {% if form.errors %}
+                    <div class="alert alert-danger" role="alert">
+                        {% for error in form.non_field_errors %}
+                            <div>{{ error }}</div>
+                        {% endfor %}
+                        {% for field in form %}
+                            {% for error in field.errors %}
+                                <div>{{ field.label }}: {{ error }}</div>
+                            {% endfor %}
+                        {% endfor %}
+                    </div>
+                {% endif %}
                 <div class="row mb-5">
                     <div class="col-6 col-md-3">
                         
                         <label for="classic" class="position-relative" style="cursor: pointer;">
                             <img src="img/menu_classical.png" alt="" class="w-100">
-                            <input form="order" type="radio" name="menu_type" id="classic" value="classic" class="foodplan_selected d-none" checked>
+                            <input form="order" type="radio" name="menu_type" id="classic" value="classic" class="foodplan_selected d-none" {% if order_values.menu_type == 'classic' %}checked{% endif %}>
                             <div class="img_selected" id="img1"></div>
                         </label>
                     </div>
@@ -41,7 +58,7 @@
                         
                         <label for="low" class="position-relative" style="cursor: pointer;">
                             <img src="./../media/img/menu_nizkougl.png" alt="" class="w-100">
-                            <input form="order" type="radio" name="menu_type" id="low" value="low_carb" class="foodplan_selected d-none">
+                            <input form="order" type="radio" name="menu_type" id="low" value="low_carb" class="foodplan_selected d-none" {% if order_values.menu_type == 'low_carb' %}checked{% endif %}>
                             <div class="img_selected" id="img2"></div>
                         </label>
                     </div>
@@ -49,7 +66,7 @@
                         
                         <label for="veg" class="position-relative" style="cursor: pointer;">
                             <img src="./../media/img/menu_veg.png" alt="" class="w-100">
-                            <input form="order" type="radio" name="menu_type" id="veg" value="vegan" class="foodplan_selected d-none">
+                            <input form="order" type="radio" name="menu_type" id="veg" value="vegan" class="foodplan_selected d-none" {% if order_values.menu_type == 'vegan' %}checked{% endif %}>
                             <div class="./../media/img_selected" id="img3"></div>
                         </label>
                     </div>
@@ -57,23 +74,24 @@
                         
                         <label for="keto" class="position-relative" style="cursor: pointer;">
                             <img src="./../media/img/menu_keto.png" alt="" class="w-100">
-                            <input form="order" type="radio" name="menu_type" id="keto" value="keto" class="foodplan_selected d-none">
+                            <input form="order" type="radio" name="menu_type" id="keto" value="keto" class="foodplan_selected d-none" {% if order_values.menu_type == 'keto' %}checked{% endif %}>
                             <div class="img_selected" id="img4"></div>
                         </label>
                     </div>
                 </div>
                 <h2><strong>Выберите подходящий тариф</strong></h2>
-                <form id="order">
+                <form id="order" method="post" action="{% url 'order' %}" novalidate>
+                {% csrf_token %}
                 <table class="table text-center text-truncate mb-5">
                     <tbody>
                         <tr>
                             <th scope="row" class="text-start">Срок</th>
                             <td>
                                 <select name="plan_duration" id="plan-duration" class="form-select">
-                                    <option value="1" selected>1 мес.</option>
-                                    <option value="3">3 мес.</option>
-                                    <option value="6">6 мес.</option>
-                                    <option value="12">12 мес.</option>
+                                    <option value="1" {% if order_values.plan_duration == '1' %}selected{% endif %}>1 мес.</option>
+                                    <option value="3" {% if order_values.plan_duration == '3' %}selected{% endif %}>3 мес.</option>
+                                    <option value="6" {% if order_values.plan_duration == '6' %}selected{% endif %}>6 мес.</option>
+                                    <option value="12" {% if order_values.plan_duration == '12' %}selected{% endif %}>12 мес.</option>
                                 </select>
                             </td>
                         </tr>
@@ -81,8 +99,8 @@
                             <th scope="row" class="text-start">Завтраки</th>
                             <td>
                                 <select name="has_breakfast" class="form-select js-meal-select" data-meal="breakfast">
-                                    <option value="1" selected>&#10004;</option>
-                                    <option value="0">&#10008;</option>
+                                    <option value="1" {% if order_values.has_breakfast == '1' %}selected{% endif %}>&#10004;</option>
+                                    <option value="0" {% if order_values.has_breakfast == '0' %}selected{% endif %}>&#10008;</option>
                                 </select>
                             </td>
                         </tr>
@@ -90,8 +108,8 @@
                             <th scope="row" class="text-start">Обеды</th>
                             <td>
                                 <select name="has_lunch" class="form-select js-meal-select" data-meal="lunch">
-                                    <option value="1" selected>&#10004;</option>
-                                    <option value="0">&#10008;</option>
+                                    <option value="1" {% if order_values.has_lunch == '1' %}selected{% endif %}>&#10004;</option>
+                                    <option value="0" {% if order_values.has_lunch == '0' %}selected{% endif %}>&#10008;</option>
                                 </select>
                             </td>
                         </tr>
@@ -99,8 +117,8 @@
                             <th scope="row" class="text-start">Ужины</th>
                             <td>
                                 <select name="has_dinner" class="form-select js-meal-select" data-meal="dinner">
-                                    <option value="1" selected>&#10004;</option>
-                                    <option value="0">&#10008;</option>
+                                    <option value="1" {% if order_values.has_dinner == '1' %}selected{% endif %}>&#10004;</option>
+                                    <option value="0" {% if order_values.has_dinner == '0' %}selected{% endif %}>&#10008;</option>
                                 </select>
                             </td>
                         </tr>
@@ -108,8 +126,8 @@
                             <th scope="row" class="text-start">Десерты</th>
                             <td>
                                 <select name="has_dessert" class="form-select js-meal-select" data-meal="dessert">
-                                    <option value="1" selected>&#10004;</option>
-                                    <option value="0">&#10008;</option>
+                                    <option value="1" {% if order_values.has_dessert == '1' %}selected{% endif %}>&#10004;</option>
+                                    <option value="0" {% if order_values.has_dessert == '0' %}selected{% endif %}>&#10008;</option>
                                 </select>
                             </td>
                         </tr>
@@ -117,54 +135,35 @@
                             <th scope="row" class="text-start">Кол-во персон</th>
                             <td>
                                 <select name="persons" class="form-select">
-                                    <option value="1" selected>1</option>
-                                    <option value="2">2</option>
-                                    <option value="3">3</option>
-                                    <option value="4">4</option>
-                                    <option value="5">5</option>
-                                    <option value="6">6</option>
+                                    <option value="1" {% if order_values.persons == '1' %}selected{% endif %}>1</option>
+                                    <option value="2" {% if order_values.persons == '2' %}selected{% endif %}>2</option>
+                                    <option value="3" {% if order_values.persons == '3' %}selected{% endif %}>3</option>
+                                    <option value="4" {% if order_values.persons == '4' %}selected{% endif %}>4</option>
+                                    <option value="5" {% if order_values.persons == '5' %}selected{% endif %}>5</option>
+                                    <option value="6" {% if order_values.persons == '6' %}selected{% endif %}>6</option>
                                 </select>
                             </td>
                         </tr>
                         <tr>
                             <th scope="row" class="text-start">Аллергии</th>
                             <td>
-                                <div class="form-check d-flex justify-content-start">
-                                    <input class="form-check-input me-1 foodplan_checked-green" type="checkbox" value="" name="allergy1">
-                                    <label class="form-check-label" for="allergy1">
-                                        Рыба и морепродукты
-                                    </label>
-                                </div>
-                                <div class="form-check d-flex justify-content-start">
-                                    <input class="form-check-input me-1 foodplan_checked-green" type="checkbox" value="" name="allergy2">
-                                    <label class="form-check-label" for="allergy2">
-                                        Мясо
-                                    </label>
-                                </div>
-                                <div class="form-check d-flex justify-content-start">
-                                    <input class="form-check-input me-1 foodplan_checked-green" type="checkbox" value="" name="allergy3">
-                                    <label class="form-check-label" for="allergy3">
-                                        Зерновые
-                                    </label>
-                                </div>
-                                <div class="form-check d-flex justify-content-start">
-                                    <input class="form-check-input me-1 foodplan_checked-green" type="checkbox" value="" name="allergy3">
-                                    <label class="form-check-label" for="allergy3">
-                                        Продукты пчеловодства
-                                    </label>
-                                </div>
-                                <div class="form-check d-flex justify-content-start">
-                                    <input class="form-check-input me-1 foodplan_checked-green" type="checkbox" value="" name="allergy3">
-                                    <label class="form-check-label" for="allergy3">
-                                        Орехи и бобовые
-                                    </label>
-                                </div>
-                                <div class="form-check d-flex justify-content-start">
-                                    <input class="form-check-input me-1 foodplan_checked-green" type="checkbox" value="" name="allergy3">
-                                    <label class="form-check-label" for="allergy3">
-                                        Молочные продукты
-                                    </label>
-                                </div>
+                                {% for allergen in allergens %}
+                                    <div class="form-check d-flex justify-content-start">
+                                        <input
+                                            class="form-check-input me-1 foodplan_checked-green"
+                                            type="checkbox"
+                                            value="{{ allergen.id }}"
+                                            name="excluded_allergens"
+                                            id="allergen-{{ allergen.id }}"
+                                            {% if allergen.id|stringformat:'s' in selected_allergen_ids %}checked{% endif %}
+                                        >
+                                        <label class="form-check-label" for="allergen-{{ allergen.id }}">
+                                            {{ allergen.name }}
+                                        </label>
+                                    </div>
+                                {% empty %}
+                                    <small class="text-muted">Аллергены пока не добавлены в админке.</small>
+                                {% endfor %}
                             </td>
                         </tr>
                     </tbody>
@@ -173,9 +172,9 @@
                 </form>
 
                 <form class="card d-flex flex-row align-items-baseline mb-5 p-3 foodplan__bg_grey">
-                    <label for="exampleInputPassword1" class="form-label me-2">Промокод</label>
-                    <input type="text" class="form-control me-2" id="promo-code" name="promo_code" form="order">
-                    <button type="button" class="btn shadow-none btn-outline-success foodplan_green foodplan__border_green">Применить</button>
+                    <label for="promo-code" class="form-label me-2">Промокод</label>
+                    <input type="text" class="form-control me-2" id="promo-code" name="promo_code" form="order" value="{{ order_values.promo_code }}">
+                    <span class="btn shadow-none btn-outline-success foodplan_green foodplan__border_green disabled">При оплате</span>
                 </form>
                 <div class="d-flex justify-content-center my-5">
                     <button form="order" type="submit" class="btn shadow-none btn-outline-success foodplan_green foodplan__border_green w-50">Оплатить</button>

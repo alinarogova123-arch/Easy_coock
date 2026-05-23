@@ -1,10 +1,11 @@
+from django.contrib import messages
 from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_POST
 
-from .forms import LoginForm, RegistrationForm
-from .models import Recipe, Subscription, SubscriptionStatus
+from .forms import LoginForm, OrderForm, RegistrationForm
+from .models import Allergen, Recipe, Subscription, SubscriptionStatus
 from .services.menu_generator import generate_daily_menu
 
 
@@ -74,9 +75,41 @@ def get_card(request):
     return render(request, "card.html", {"recipes_for_card": recipes_for_card})
 
 
+@login_required(login_url='auth')
 def get_order(request):
+    if request.method == 'POST':
+        form = OrderForm(request.POST)
+        if form.is_valid():
+            subscription = form.save(request.user)
+            messages.success(
+                request,
+                (
+                    'Заявка на подписку создана. '
+                    f'Статус: {subscription.get_status_display()}.'
+                ),
+            )
+            return redirect('order')
+    else:
+        form = OrderForm()
 
-    return render(request, "order.html", {})
+    order_values = {
+        'menu_type': request.POST.get('menu_type', 'classic'),
+        'plan_duration': request.POST.get('plan_duration', '1'),
+        'has_breakfast': request.POST.get('has_breakfast', '1'),
+        'has_lunch': request.POST.get('has_lunch', '1'),
+        'has_dinner': request.POST.get('has_dinner', '1'),
+        'has_dessert': request.POST.get('has_dessert', '1'),
+        'persons': request.POST.get('persons', '1'),
+        'promo_code': request.POST.get('promo_code', ''),
+    }
+
+    context = {
+        'form': form,
+        'order_values': order_values,
+        'allergens': Allergen.objects.order_by('name'),
+        'selected_allergen_ids': request.POST.getlist('excluded_allergens'),
+    }
+    return render(request, "order.html", context)
 
 
 @login_required
