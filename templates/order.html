@@ -18,7 +18,7 @@
                 <a class="navbar-brand" href="{% url 'home' %}">
                     <img src="./../media/img/logo.8d8f24edbb5f.svg" height="55" width="189" alt="">
                 </a>
-                <h3 class="text-secondary mt-2 me-2">Стоимость: 00000₽</h3>
+                <h3 class="text-secondary mt-2 me-2">Стоимость: <span id="order-price">0 ₽</span></h3>
                 <button form="order" type="submit" class="btn shadow-none btn-sm btn-outline-success foodplan_green foodplan__border_green">Оплатить</button>
             </div>
         </nav>
@@ -33,7 +33,7 @@
                         
                         <label for="classic" class="position-relative" style="cursor: pointer;">
                             <img src="img/menu_classical.png" alt="" class="w-100">
-                            <input form="order" type="radio" name="foodtype" id="classic" value="classic" class="foodplan_selected d-none">
+                            <input form="order" type="radio" name="menu_type" id="classic" value="classic" class="foodplan_selected d-none" checked>
                             <div class="img_selected" id="img1"></div>
                         </label>
                     </div>
@@ -41,7 +41,7 @@
                         
                         <label for="low" class="position-relative" style="cursor: pointer;">
                             <img src="./../media/img/menu_nizkougl.png" alt="" class="w-100">
-                            <input form="order" type="radio" name="foodtype" id="low" value="low" class="foodplan_selected d-none">
+                            <input form="order" type="radio" name="menu_type" id="low" value="low_carb" class="foodplan_selected d-none">
                             <div class="img_selected" id="img2"></div>
                         </label>
                     </div>
@@ -49,7 +49,7 @@
                         
                         <label for="veg" class="position-relative" style="cursor: pointer;">
                             <img src="./../media/img/menu_veg.png" alt="" class="w-100">
-                            <input form="order" type="radio" name="foodtype" id="veg" value="veg" class="foodplan_selected d-none">
+                            <input form="order" type="radio" name="menu_type" id="veg" value="vegan" class="foodplan_selected d-none">
                             <div class="./../media/img_selected" id="img3"></div>
                         </label>
                     </div>
@@ -57,7 +57,7 @@
                         
                         <label for="keto" class="position-relative" style="cursor: pointer;">
                             <img src="./../media/img/menu_keto.png" alt="" class="w-100">
-                            <input form="order" type="radio" name="foodtype" id="keto" value="keto" class="foodplan_selected d-none">
+                            <input form="order" type="radio" name="menu_type" id="keto" value="keto" class="foodplan_selected d-none">
                             <div class="img_selected" id="img4"></div>
                         </label>
                     </div>
@@ -69,60 +69,60 @@
                         <tr>
                             <th scope="row" class="text-start">Срок</th>
                             <td>
-                                <select class="form-select">
-                                    <option value="0" selected>1 мес.</option>
-                                    <option value="1">3 мес.</option>
-                                    <option value="2">6 мес.</option>
-                                    <option value="3">12 мес.</option>
+                                <select name="plan_duration" id="plan-duration" class="form-select">
+                                    <option value="1" selected>1 мес.</option>
+                                    <option value="3">3 мес.</option>
+                                    <option value="6">6 мес.</option>
+                                    <option value="12">12 мес.</option>
                                 </select>
                             </td>
                         </tr>
                         <tr>
                             <th scope="row" class="text-start">Завтраки</th>
                             <td>
-                                <select name="select1" class="form-select">
-                                    <option value="0" selected>&#10004;</option>
-                                    <option value="1">&#10008;</option>
+                                <select name="has_breakfast" class="form-select js-meal-select" data-meal="breakfast">
+                                    <option value="1" selected>&#10004;</option>
+                                    <option value="0">&#10008;</option>
                                 </select>
                             </td>
                         </tr>
                         <tr>
                             <th scope="row" class="text-start">Обеды</th>
                             <td>
-                                <select name="select2" class="form-select">
-                                    <option value="0" selected>&#10004;</option>
-                                    <option value="1">&#10008;</option>
+                                <select name="has_lunch" class="form-select js-meal-select" data-meal="lunch">
+                                    <option value="1" selected>&#10004;</option>
+                                    <option value="0">&#10008;</option>
                                 </select>
                             </td>
                         </tr>
                         <tr>
                             <th scope="row" class="text-start">Ужины</th>
                             <td>
-                                <select name="select3" class="form-select">
-                                    <option value="0" selected>&#10004;</option>
-                                    <option value="1">&#10008;</option>
+                                <select name="has_dinner" class="form-select js-meal-select" data-meal="dinner">
+                                    <option value="1" selected>&#10004;</option>
+                                    <option value="0">&#10008;</option>
                                 </select>
                             </td>
                         </tr>
                         <tr>
                             <th scope="row" class="text-start">Десерты</th>
                             <td>
-                                <select name="select4" class="form-select">
-                                    <option value="0" selected>&#10004;</option>
-                                    <option value="1">&#10008;</option>
+                                <select name="has_dessert" class="form-select js-meal-select" data-meal="dessert">
+                                    <option value="1" selected>&#10004;</option>
+                                    <option value="0">&#10008;</option>
                                 </select>
                             </td>
                         </tr>
                         <tr>
                             <th scope="row" class="text-start">Кол-во персон</th>
                             <td>
-                                <select name="select5" class="form-select">
-                                    <option value="0" selected>1</option>
-                                    <option value="1">2</option>
-                                    <option value="2">3</option>
-                                    <option value="3">4</option>
-                                    <option value="4">5</option>
-                                    <option value="5">6</option>
+                                <select name="persons" class="form-select">
+                                    <option value="1" selected>1</option>
+                                    <option value="2">2</option>
+                                    <option value="3">3</option>
+                                    <option value="4">4</option>
+                                    <option value="5">5</option>
+                                    <option value="6">6</option>
                                 </select>
                             </td>
                         </tr>
@@ -174,8 +174,8 @@
 
                 <form class="card d-flex flex-row align-items-baseline mb-5 p-3 foodplan__bg_grey">
                     <label for="exampleInputPassword1" class="form-label me-2">Промокод</label>
-                    <input type="password" class="form-control me-2" id="password">
-                    <button type="submit" class="btn shadow-none btn-outline-success foodplan_green foodplan__border_green">Применить</button>
+                    <input type="text" class="form-control me-2" id="promo-code" name="promo_code" form="order">
+                    <button type="button" class="btn shadow-none btn-outline-success foodplan_green foodplan__border_green">Применить</button>
                 </form>
                 <div class="d-flex justify-content-center my-5">
                     <button form="order" type="submit" class="btn shadow-none btn-outline-success foodplan_green foodplan__border_green w-50">Оплатить</button>
@@ -183,8 +183,9 @@
             </div>
         </section>
     </main>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
-        crossorigin="anonymous"></script>
+	    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+	        integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+	        crossorigin="anonymous"></script>
+	    <script src="{% static 'js/order_price.js' %}"></script>
 </body>
 </html>
