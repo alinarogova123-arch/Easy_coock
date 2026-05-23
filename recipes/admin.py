@@ -11,7 +11,11 @@ from .models import (
     Subscription,
     SubscriptionPlan,
 )
-from .services.subscriptions import activate_subscription
+from .services.subscriptions import (
+    activate_subscription,
+    cancel_subscription,
+    expire_subscription,
+)
 
 
 @admin.register(SubscriptionPlan)
@@ -69,7 +73,11 @@ class SubscriptionAdmin(admin.ModelAdmin):
         'total_paid',
     ]
     filter_horizontal = ['excluded_allergens']
-    actions = ['activate_selected_subscriptions']
+    actions = [
+        'activate_selected_subscriptions',
+        'cancel_selected_subscriptions',
+        'expire_selected_subscriptions',
+    ]
     fields = [
         'user',
         'plan',
@@ -92,29 +100,65 @@ class SubscriptionAdmin(admin.ModelAdmin):
 
     @admin.action(description='Активировать выбранные подписки')
     def activate_selected_subscriptions(self, request, queryset):
-        activated_count = 0
+        self.apply_subscription_action(
+            request,
+            queryset,
+            activate_subscription,
+            success_message='Активировано подписок: {}.',
+            error_message='Не удалось активировать: ',
+        )
+
+    @admin.action(description='Отменить выбранные подписки')
+    def cancel_selected_subscriptions(self, request, queryset):
+        self.apply_subscription_action(
+            request,
+            queryset,
+            cancel_subscription,
+            success_message='Отменено подписок: {}.',
+            error_message='Не удалось отменить: ',
+        )
+
+    @admin.action(description='Пометить истекшими выбранные подписки')
+    def expire_selected_subscriptions(self, request, queryset):
+        self.apply_subscription_action(
+            request,
+            queryset,
+            expire_subscription,
+            success_message='Помечено истекшими подписок: {}.',
+            error_message='Не удалось пометить истекшими: ',
+        )
+
+    def apply_subscription_action(
+        self,
+        request,
+        queryset,
+        action_func,
+        success_message,
+        error_message,
+    ):
+        processed_count = 0
         failed_messages = []
 
         for subscription in queryset.select_related('plan', 'promo_code'):
             try:
-                activate_subscription(subscription)
+                action_func(subscription)
             except ValidationError as error:
                 failed_messages.append(
                     f'{subscription}: {"; ".join(error.messages)}'
                 )
             else:
-                activated_count += 1
+                processed_count += 1
 
-        if activated_count:
+        if processed_count:
             self.message_user(
                 request,
-                f'Активировано подписок: {activated_count}.',
+                success_message.format(processed_count),
                 level=messages.SUCCESS,
             )
         if failed_messages:
             self.message_user(
                 request,
-                'Не удалось активировать: ' + ' | '.join(failed_messages[:5]),
+                error_message + ' | '.join(failed_messages[:5]),
                 level=messages.ERROR,
             )
 

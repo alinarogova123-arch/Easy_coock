@@ -54,3 +54,65 @@ def activate_subscription(subscription, activated_at=None):
         )
 
     return subscription
+
+
+def cancel_subscription(subscription):
+    with transaction.atomic():
+        subscription = Subscription.objects.select_for_update().get(
+            pk=subscription.pk
+        )
+
+        if subscription.status not in (
+            SubscriptionStatus.PENDING,
+            SubscriptionStatus.ACTIVE,
+        ):
+            raise ValidationError(
+                'Отменить можно только ожидающую или активную подписку.'
+            )
+
+        subscription.status = SubscriptionStatus.CANCELLED
+        subscription.save(update_fields=['status'])
+
+    return subscription
+
+
+def expire_subscription(subscription, expired_at=None):
+    current_time = expired_at or timezone.now()
+
+    with transaction.atomic():
+        subscription = Subscription.objects.select_for_update().get(
+            pk=subscription.pk
+        )
+
+        if subscription.status != SubscriptionStatus.ACTIVE:
+            raise ValidationError(
+                'Истечь может только активная подписка.'
+            )
+        if subscription.expires_at is None:
+            raise ValidationError(
+                'Нельзя завершить подписку без даты окончания.'
+            )
+        if subscription.expires_at > current_time:
+            raise ValidationError(
+                'Срок подписки ещё не истёк.'
+            )
+
+        subscription.status = SubscriptionStatus.EXPIRED
+        subscription.save(update_fields=['status'])
+
+    return subscription
+
+
+def expire_due_subscriptions(expired_at=None):
+    current_time = expired_at or timezone.now()
+    subscriptions = Subscription.objects.filter(
+        status=SubscriptionStatus.ACTIVE,
+        expires_at__lte=current_time,
+    )
+
+    expired_count = 0
+    for subscription in subscriptions:
+        expire_subscription(subscription, expired_at=current_time)
+        expired_count += 1
+
+    return expired_count
