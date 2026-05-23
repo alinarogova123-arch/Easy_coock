@@ -23,7 +23,9 @@ def calculate_meals_price(food_types):
 
 def calculate_subscription_price(food_types, plan):
     meals_price = calculate_meals_price(food_types)
-    total = meals_price * Decimal(plan.price_coefficient)
+    total = (
+        meals_price * Decimal(plan.price_coefficient) * Decimal(plan.duration)
+    )
     return total.quantize(MONEY_QUANT, rounding=ROUND_HALF_UP)
 
 
