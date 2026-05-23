@@ -1,4 +1,5 @@
-from django.contrib import admin
+from django.contrib import admin, messages
+from django.core.exceptions import ValidationError
 from django.utils.html import format_html
 
 from .models import (
@@ -10,6 +11,7 @@ from .models import (
     Subscription,
     SubscriptionPlan,
 )
+from .services.subscriptions import activate_subscription
 
 
 @admin.register(SubscriptionPlan)
@@ -45,12 +47,29 @@ class PromoCodeAdmin(admin.ModelAdmin):
 
 @admin.register(Subscription)
 class SubscriptionAdmin(admin.ModelAdmin):
-    list_display = ['user', 'plan', 'persons', 'status', 'expires_at']
+    list_display = [
+        'user',
+        'plan',
+        'persons',
+        'status',
+        'total_paid',
+        'activated_at',
+        'expires_at',
+    ]
     list_filter = ['status', 'plan']
     search_fields = ['user__username', 'user__email']
     raw_id_fields = ['user']
-    readonly_fields = ['created_at', 'activated_at']
+    readonly_fields = [
+        'status',
+        'created_at',
+        'activated_at',
+        'expires_at',
+        'total_before_discount',
+        'discount_amount',
+        'total_paid',
+    ]
     filter_horizontal = ['excluded_allergens']
+    actions = ['activate_selected_subscriptions']
     fields = [
         'user',
         'plan',
@@ -70,6 +89,34 @@ class SubscriptionAdmin(admin.ModelAdmin):
         'discount_amount',
         'total_paid',
     ]
+
+    @admin.action(description='Активировать выбранные подписки')
+    def activate_selected_subscriptions(self, request, queryset):
+        activated_count = 0
+        failed_messages = []
+
+        for subscription in queryset.select_related('plan', 'promo_code'):
+            try:
+                activate_subscription(subscription)
+            except ValidationError as error:
+                failed_messages.append(
+                    f'{subscription}: {"; ".join(error.messages)}'
+                )
+            else:
+                activated_count += 1
+
+        if activated_count:
+            self.message_user(
+                request,
+                f'Активировано подписок: {activated_count}.',
+                level=messages.SUCCESS,
+            )
+        if failed_messages:
+            self.message_user(
+                request,
+                'Не удалось активировать: ' + ' | '.join(failed_messages[:5]),
+                level=messages.ERROR,
+            )
 
 
 class RecipeIngredientInline(admin.TabularInline):
