@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ recipe.name }} - Foodplan{% endblock %}
+
+{% block content %}
+    <main style="margin-top: calc(2rem + 75px);">
+        <section>
+            <div class="container">
+                <div class="row">
+                    <div class="col-12 col-md-4 d-flex justify-content-center">
+                        <div class="card foodplan__card_borderless">
+                            {% if recipe.image %}
+                                <img src="{{ recipe.image.url }}" class="img-fluid rounded" alt="{{ recipe.name }}">
+                            {% else %}
+                                <img src="{% static 'images/circle1' %}" class="img-fluid rounded" alt="Нет фото">
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-6 d-flex flex-column justify-content-between">
+                        <h2>{{ recipe.name }}</h2>
+                        <div class="mb-3">
+                            <span class="badge bg-success">{{ recipe.get_food_type_display }}</span>
+                            <span class="badge bg-secondary">{{ recipe.get_menu_type_display }}</span>
+                            <span class="badge bg-info">{{ recipe.cooking_time }} мин</span>
+                            <span class="badge bg-warning">{{ recipe.calories }} ккал</span>
+                        </div>
+                        <p class="text-muted">{{ recipe.description|default:"" }}</p>
+
+                        <h5>Ингредиенты</h5>
+                        <ul class="list-group list-group-flush mb-3">
+                            {% for position in recipe.ingredients.all %}
+                                <li class="list-group-item">
+                                    {{ position.ingredient.name }} - {{ position.amount }} {{ position.ingredient.unit }}
+                                </li>
+                            {% empty %}
+                                <li class="list-group-item text-muted">Ингредиенты не добавлены</li>
+                            {% endfor %}
+                        </ul>
+
+                        <h5>Как готовить</h5>
+                        <p>{{ recipe.instruction|linebreaksbr }}</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row mt-5">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header bg-success text-white">
+                            <h4 class="mb-0">Комментарии ({{ comments|length }})</h4>
+                        </div>
+                        <div class="card-body">
+                            {% if user.is_authenticated %}
+                                <div class="mb-4 p-3 bg-light rounded">
+                                    <h5>Оставить комментарий</h5>
+                                    <form method="post">
+                                        {% csrf_token %}
+                                        <div class="mb-2">
+                                            {{ form.text }}
+                                        </div>
+                                        <div class="mb-2">
+                                            {{ form.rating }}
+                                        </div>
+                                        <button type="submit" class="btn btn-outline-success">Отправить</button>
+                                    </form>
+                                </div>
+                            {% else %}
+                                <div class="alert alert-info">
+                                    <a href="{% url 'auth' %}" class"alert-link">Войдите</a>, чтобы оставить комментарий
+                                </div>
+                            {% endif %}
+
+                            {% if comments %}
+                                {% for comment in comments %}
+                                    <div class="border-button p-3 mb-3">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <strong>{{ comment.author.username }}</strong>
+                                            <small class="text-muted">{{ comment.created_at|date:"d.m.Y H:i"}}</small>
+                                        </div>
+                                        <div class="my-1">
+                                            <span class="text-warning">{{ comment.stars_display }}</span>
+                                        </div>
+                                        <p class="mb-0">{{ comment.text }}</p>
+                                    </div>
+                                {% endfor %}
+                            {% else %}
+                                <p class="text-muted text-center py-3 mb-0">
+                                    Пока комментариев нет
+                                </p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+{% endblock %}
+

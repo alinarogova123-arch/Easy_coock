@@ -7,7 +7,7 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_POST
 
-from .forms import LoginForm, OrderForm, RegistrationForm
+from .forms import CommentForm, LoginForm, OrderForm, RegistrationForm
 from .models import Allergen, Recipe, Subscription, SubscriptionStatus
 from .services.menu_generator import generate_daily_menu
 
@@ -174,3 +174,32 @@ def get_daily_menu(request, subscription_id):
     }
 
     return render(request, 'subscription_menu.html', context)
+
+
+def recipe_detail(request, recipe_id):
+    recipe = get_object_or_404(Recipe, id=recipe_id)
+    comments = recipe.comments.filter(is_approved=True).select_related(
+        'author'
+    )
+
+    if request.method == 'POST' and request.user.is_authenticated:
+        form = CommentForm(request.POST)
+        if form.is_valid():
+            comment = form.save(commit=False)
+            comment.recipe = recipe
+            comment.author = request.user
+            comment.save()
+            messages.success(
+                request, 'Комментарий добавлен и отправлен на модерацию.'
+            )
+            return redirect('recipe', recipe_id=recipe.id)
+    else:
+        form = CommentForm()
+
+    context = {
+        'recipe': recipe,
+        'comments': comments,
+        'form': form,
+    }
+
+    return render(request, 'recipe.html', context)

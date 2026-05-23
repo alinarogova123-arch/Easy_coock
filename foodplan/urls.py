@@ -19,6 +19,11 @@ urlpatterns = (
             views.get_daily_menu,
             name='subscription_menu',
         ),
+        path(
+            'recipe/<int:recipe_id>/',
+            views.recipe_detail,
+            name='recipe_detail',
+        ),
     ]
     + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
     + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -2,10 +2,16 @@ from django import forms
 from django.contrib.auth import authenticate, get_user_model
 from django.contrib.auth.forms import UserCreationForm
 
-from .models import Allergen, FoodType, MenuType, Subscription, SubscriptionPlan
+from .models import (
+    Allergen,
+    Comment,
+    FoodType,
+    MenuType,
+    Subscription,
+    SubscriptionPlan,
+)
 from .services.pricing import calculate_order_price
 from .services.promo import find_promo_code, validate_promo_code
-
 
 PLAN_DURATION_CHOICES = (
     (1, '1 мес.'),
@@ -207,3 +213,25 @@ class OrderForm(forms.Form):
             self.cleaned_data['excluded_allergens']
         )
         return subscription
+
+
+class CommentForm(forms.ModelForm):
+    class Meta:
+        model = Comment
+        fields = ['text', 'rating']
+        widgets = {
+            'text': forms.Textarea(
+                attrs={
+                    'class': 'form-control',
+                    'rows': 4,
+                    'placeholder': 'Поделитесь своим мнением о рецепте...',
+                }
+            ),
+            'rating': forms.Select(
+                attrs={
+                    'class': 'form-select',
+                    'style': 'width: auto',
+                }
+            ),
+        }
+        labels = {'text': 'Ваш комментарий', 'rating': 'Оценка'}

@@ -74,7 +74,7 @@ class Recipe(models.Model):
     )
     calories = models.PositiveIntegerField(verbose_name='Калории')
 
-    images = models.ImageField(
+    image = models.ImageField(
         verbose_name='Изображение', upload_to='', blank=True
     )
 
@@ -372,3 +372,6 @@ class Comment(models.Model):
 
     def __str__(self):
         return f'{self.author.username}: {self.text[:30]}...'
+
+    def stars_display(self):
+        return '★' * self.rating + '☆' * (5 - self.rating)

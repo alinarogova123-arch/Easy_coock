@@ -11,6 +11,17 @@
     <link rel="icon" type="image/png" href="{% static 'images/favicon.png' %}">
     <title>{% block title %}Default title{% endblock %}</title>
 </head>
+<body>
+    <header>
+        <nav class="navbar navbar-expand-md navbar-light fixed-top navbar__opacity">
+            <div class="container">
+                <a class="navbar-brand" href="{% url 'home' %}">
+                    <img src="{% static 'images/logo.8d8f24edbb5f.svg' %}" height="55" width="189" alt="">
+                </a>
+                <a class="btn btn-outline-success shadow-none foodplan_green foodplan__border_green" href="{% url 'lk' %}">Личный кабинет</a>
+            </div>
+        </nav>
+    </header>
     {% block content %}
     {% endblock %}
 
@@ -18,5 +29,13 @@
     integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
     crossorigin="anonymous"></script>
 </body>
+<footer class="footer pt-2" style="border-top: 1px solid lightgray;">
+    <div class="container d-flex flex-row justify-content-center mb-2">
+        <small class="text-center">
+            <h6>© Девман2022. Все права защищены. © Devman2022. All right reserved.</h6>
+            <a href="#" class="link-secondary">Политика конфиденциальности</a>
+        </small>
+    </div>
+</footer>
 </html>
 

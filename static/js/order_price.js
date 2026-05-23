@@ -45,7 +45,7 @@ function updateOrderPrice() {
   }
 
   const totalPrice = getSelectedMealsPrice() * getDurationCoefficient();
-  priceElement.textContent = `${priceFormatter.format(totalPrice)} ₽`;
+  priceElement.textContent = `${priceFormatter.format(totalPrice)}`;
 }
 
 document.addEventListener("DOMContentLoaded", () => {

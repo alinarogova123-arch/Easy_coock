@@ -1,32 +1,16 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends "base.html" %}
 {% load static %}
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-    <link rel="stylesheet" href="{% static 'css/style.css' %}">
-    <link rel="icon" type="image/png" href="{% static 'images/favicon.png' %}">
-    <title>Foodplan 2021 - Меню на неделю FOODPLAN</title>
-</head>
-<body>
-    <header>
-        <nav class="navbar navbar-expand-md navbar-light fixed-top navbar__opacity">
-            <div class="container">
-                <a class="navbar-brand" href="{% url 'home' %}">
-                    <img src="{% static 'images/logo.8d8f24edbb5f.svg' %}" height="55" width="189" alt="">
-                </a>
-                <h3 class="text-secondary mt-2 me-2">Стоимость: <span id="order-price">0 ₽</span></h3>
-                <button form="order" type="submit" class="btn shadow-none btn-sm btn-outline-success foodplan_green foodplan__border_green">Оплатить</button>
-            </div>
-        </nav>
-    </header>
+
+{% block title %}Foodplan 2021 - Меню на неделю FOODPLAN{% endblock %}
+{% block content %}
     <main style="margin-top: calc(2rem + 85px);">
         <section>
             <div class="container">
                 <h1><strong class="foodplan_green">1 шаг </strong>до первого меню</h1>
+                <h2  class="text-secondary">Стоимость: 
+                    <span id="order-price" class="foodplan_green fw-bold">0</span>
+                    <small class="fs-5">руб/мес</small>
+                </h2>
                 <h5 class="text-secondary mb-3">Вам будет доступно 4 типа меню: Классическое, Низкоуглеводное, Вегетарианское и Кето.</h5>
                 {% for message in messages %}
                     <div class="alert alert-success" role="alert">
@@ -182,9 +166,6 @@
             </div>
         </section>
     </main>
-	    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
-	        integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
-	        crossorigin="anonymous"></script>
-	    <script src="{% static 'js/order_price.js' %}"></script>
-</body>
+    <script src="{% static 'js/order_price.js' %}"></script>
+{% endblock %}
 </html>

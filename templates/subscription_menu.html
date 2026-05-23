@@ -4,17 +4,6 @@
 {% block title %}Foodplan 2026 - Меню на сегодня{% endblock %}
 
 {% block content %}
-<body>
-    <header>
-        <nav class="navbar navbar-expand-md navbar-light fixed-top navbar__opacity">
-            <div class="container">
-                <a class="navbar-brand" href="{% url 'home' %}">
-                    <img src="{% static 'images/logo.8d8f24edbb5f.svg' %}" height="55" width="189" alt="">
-                </a>
-                <a class="btn btn-outline-success shadow-none foodplan_green foodplan__border_green" href="{% url 'lk' %}">Личный кабинет</a>
-            </div>
-        </nav>
-    </header>
     <main style="margin-top: calc(2rem + 85px);">
         <section>
             <div class="container">
@@ -32,8 +21,8 @@
                                 {% if recipe %}
                                     <div class="row">
                                         <div class="col-12 col-md-4 mb-3 mb-md-0">
-                                            {% if recipe.images %}
-                                                <img src="{{ recipe.images.url }}" class="w-100 rounded" alt="{{ recipe.name }}">
+                                            {% if recipe.image %}
+                                                <img src="{{ recipe.image.url }}" class="w-100 rounded" alt="{{ recipe.name }}">
                                             {% else %}
                                                 <img src="{% static 'images/1.jpg' %}" class="w-100 rounded" alt="">
                                             {% endif %}
@@ -68,8 +57,8 @@
                                 {% if recipe %}
                                     <div class="row">
                                         <div class="col-12 col-md-4 mb-3 mb-md-0">
-                                            {% if recipe.images %}
-                                                <img src="{{ recipe.images.url }}" class="w-100 rounded" alt="{{ recipe.name }}">
+                                            {% if recipe.image %}
+                                                <img src="{{ recipe.image.url }}" class="w-100 rounded" alt="{{ recipe.name }}">
                                             {% else %}
                                                 <img src="{% static 'images/2.jpg' %}" class="w-100 rounded" alt="">
                                             {% endif %}
@@ -104,8 +93,8 @@
                                 {% if recipe %}
                                     <div class="row">
                                         <div class="col-12 col-md-4 mb-3 mb-md-0">
-                                            {% if recipe.images %}
-                                                <img src="{{ recipe.images.url }}" class="w-100 rounded" alt="{{ recipe.name }}">
+                                            {% if recipe.image %}
+                                                <img src="{{ recipe.image.url }}" class="w-100 rounded" alt="{{ recipe.name }}">
                                             {% else %}
                                                 <img src="{% static 'images/3.jpg' %}" class="w-100 rounded" alt="">
                                             {% endif %}
@@ -140,8 +129,8 @@
                                 {% if recipe %}
                                     <div class="row">
                                         <div class="col-12 col-md-4 mb-3 mb-md-0">
-                                            {% if recipe.images %}
-                                                <img src="{{ recipe.images.url }}" class="w-100 rounded" alt="{{ recipe.name }}">
+                                            {% if recipe.image %}
+                                                <img src="{{ recipe.image.url }}" class="w-100 rounded" alt="{{ recipe.name }}">
                                             {% else %}
                                                 <img src="{% static 'images/4.jpg' %}" class="w-100 rounded" alt="">
                                             {% endif %}
@@ -208,5 +197,4 @@
             </div>
         </section>
     </main>
-</body>
 {% endblock %}
