@@ -1,0 +1,179 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Foodplan 2026 - Меню на сегодня{% endblock %}
+
+{% block content %}
+<body>
+    <header>
+        <nav class="navbar navbar-expand-md navbar-light fixed-top navbar__opacity">
+            <div class="container">
+                <a class="navbar-brand" href="{% url 'home' %}">
+                    <img src="{% static 'images/logo.8d8f24edbb5f.svg' %}" height="55" width="189" alt="">
+                </a>
+                <a class="btn btn-outline-success shadow-none foodplan_green foodplan__border_green" href="{% url 'lk' %}">Личный кабинет</a>
+            </div>
+        </nav>
+    </header>
+    <main style="margin-top: calc(2rem + 85px);">
+        <section>
+            <div class="container">
+                <div class="card p-3 mb-5 foodplan__shadow">
+                    <h2 class="text-center"><strong>Меню на сегодня</strong></h2>
+                    <p class="text-center text-muted mb-0">{{ subscription.plan.name }} · {{ subscription.get_menu_type_display }} меню</p>
+                </div>
+
+                {% if daily_menu %}
+                    {% if subscription.has_breakfast %}
+                        {% with recipe=daily_menu.breakfast meal_title="Завтрак" %}
+                            <div class="card p-4 mb-4 foodplan__shadow">
+                                <h3>{{ meal_title }}</h3>
+                                {% if recipe %}
+                                    <div class="row">
+                                        <div class="col-12 col-md-4 mb-3 mb-md-0">
+                                            {% if recipe.images %}
+                                                <img src="{{ recipe.images.url }}" class="w-100 rounded" alt="{{ recipe.name }}">
+                                            {% else %}
+                                                <img src="{% static 'images/1.jpg' %}" class="w-100 rounded" alt="">
+                                            {% endif %}
+                                        </div>
+                                        <div class="col-12 col-md-8">
+                                            <h4>{{ recipe.name }}</h4>
+                                            <p>{{ recipe.description }}</p>
+                                            <p class="text-muted">Калории: {{ recipe.calories }} · Время: {{ recipe.cooking_time }} мин.</p>
+                                            <h5>Ингредиенты</h5>
+                                            <ul>
+                                                {% for item in recipe.ingredients.all %}
+                                                    <li>{{ item.ingredient.name }} — {{ item.amount }} {{ item.ingredient.unit }}</li>
+                                                {% empty %}
+                                                    <li>Ингредиенты пока не заполнены</li>
+                                                {% endfor %}
+                                            </ul>
+                                            <h5>Инструкция</h5>
+                                            <p>{{ recipe.instruction }}</p>
+                                        </div>
+                                    </div>
+                                {% else %}
+                                    <p class="text-muted mb-0">Подходящий рецепт пока не найден.</p>
+                                {% endif %}
+                            </div>
+                        {% endwith %}
+                    {% endif %}
+
+                    {% if subscription.has_lunch %}
+                        {% with recipe=daily_menu.lunch meal_title="Обед" %}
+                            <div class="card p-4 mb-4 foodplan__shadow">
+                                <h3>{{ meal_title }}</h3>
+                                {% if recipe %}
+                                    <div class="row">
+                                        <div class="col-12 col-md-4 mb-3 mb-md-0">
+                                            {% if recipe.images %}
+                                                <img src="{{ recipe.images.url }}" class="w-100 rounded" alt="{{ recipe.name }}">
+                                            {% else %}
+                                                <img src="{% static 'images/2.jpg' %}" class="w-100 rounded" alt="">
+                                            {% endif %}
+                                        </div>
+                                        <div class="col-12 col-md-8">
+                                            <h4>{{ recipe.name }}</h4>
+                                            <p>{{ recipe.description }}</p>
+                                            <p class="text-muted">Калории: {{ recipe.calories }} · Время: {{ recipe.cooking_time }} мин.</p>
+                                            <h5>Ингредиенты</h5>
+                                            <ul>
+                                                {% for item in recipe.ingredients.all %}
+                                                    <li>{{ item.ingredient.name }} — {{ item.amount }} {{ item.ingredient.unit }}</li>
+                                                {% empty %}
+                                                    <li>Ингредиенты пока не заполнены</li>
+                                                {% endfor %}
+                                            </ul>
+                                            <h5>Инструкция</h5>
+                                            <p>{{ recipe.instruction }}</p>
+                                        </div>
+                                    </div>
+                                {% else %}
+                                    <p class="text-muted mb-0">Подходящий рецепт пока не найден.</p>
+                                {% endif %}
+                            </div>
+                        {% endwith %}
+                    {% endif %}
+
+                    {% if subscription.has_dinner %}
+                        {% with recipe=daily_menu.dinner meal_title="Ужин" %}
+                            <div class="card p-4 mb-4 foodplan__shadow">
+                                <h3>{{ meal_title }}</h3>
+                                {% if recipe %}
+                                    <div class="row">
+                                        <div class="col-12 col-md-4 mb-3 mb-md-0">
+                                            {% if recipe.images %}
+                                                <img src="{{ recipe.images.url }}" class="w-100 rounded" alt="{{ recipe.name }}">
+                                            {% else %}
+                                                <img src="{% static 'images/3.jpg' %}" class="w-100 rounded" alt="">
+                                            {% endif %}
+                                        </div>
+                                        <div class="col-12 col-md-8">
+                                            <h4>{{ recipe.name }}</h4>
+                                            <p>{{ recipe.description }}</p>
+                                            <p class="text-muted">Калории: {{ recipe.calories }} · Время: {{ recipe.cooking_time }} мин.</p>
+                                            <h5>Ингредиенты</h5>
+                                            <ul>
+                                                {% for item in recipe.ingredients.all %}
+                                                    <li>{{ item.ingredient.name }} — {{ item.amount }} {{ item.ingredient.unit }}</li>
+                                                {% empty %}
+                                                    <li>Ингредиенты пока не заполнены</li>
+                                                {% endfor %}
+                                            </ul>
+                                            <h5>Инструкция</h5>
+                                            <p>{{ recipe.instruction }}</p>
+                                        </div>
+                                    </div>
+                                {% else %}
+                                    <p class="text-muted mb-0">Подходящий рецепт пока не найден.</p>
+                                {% endif %}
+                            </div>
+                        {% endwith %}
+                    {% endif %}
+
+                    {% if subscription.has_dessert %}
+                        {% with recipe=daily_menu.dessert meal_title="Десерт" %}
+                            <div class="card p-4 mb-4 foodplan__shadow">
+                                <h3>{{ meal_title }}</h3>
+                                {% if recipe %}
+                                    <div class="row">
+                                        <div class="col-12 col-md-4 mb-3 mb-md-0">
+                                            {% if recipe.images %}
+                                                <img src="{{ recipe.images.url }}" class="w-100 rounded" alt="{{ recipe.name }}">
+                                            {% else %}
+                                                <img src="{% static 'images/4.jpg' %}" class="w-100 rounded" alt="">
+                                            {% endif %}
+                                        </div>
+                                        <div class="col-12 col-md-8">
+                                            <h4>{{ recipe.name }}</h4>
+                                            <p>{{ recipe.description }}</p>
+                                            <p class="text-muted">Калории: {{ recipe.calories }} · Время: {{ recipe.cooking_time }} мин.</p>
+                                            <h5>Ингредиенты</h5>
+                                            <ul>
+                                                {% for item in recipe.ingredients.all %}
+                                                    <li>{{ item.ingredient.name }} — {{ item.amount }} {{ item.ingredient.unit }}</li>
+                                                {% empty %}
+                                                    <li>Ингредиенты пока не заполнены</li>
+                                                {% endfor %}
+                                            </ul>
+                                            <h5>Инструкция</h5>
+                                            <p>{{ recipe.instruction }}</p>
+                                        </div>
+                                    </div>
+                                {% else %}
+                                    <p class="text-muted mb-0">Подходящий рецепт пока не найден.</p>
+                                {% endif %}
+                            </div>
+                        {% endwith %}
+                    {% endif %}
+                {% else %}
+                    <div class="card p-4 mb-4 foodplan__shadow">
+                        <p class="text-muted mb-0">Меню пока не удалось сформировать.</p>
+                    </div>
+                {% endif %}
+            </div>
+        </section>
+    </main>
+</body>
+{% endblock %}

@@ -332,6 +332,6 @@ class DailyMenu(models.Model):
     )
 
     class Meta:
-        verbose_name = ('Ежедневное меню',)
-        verbose_name_plural = ('Ежедневные меню',)
+        verbose_name = 'Ежедневное меню'
+        verbose_name_plural = 'Ежедневные меню'
         unique_together = ('subscription', 'date')

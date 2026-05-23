@@ -40,12 +40,12 @@ def registration(request):
 
 @login_required(login_url='auth')
 def lk(request):
-    Subscriptions = request.user.subscriptions.filter(
+    subscriptions = request.user.subscriptions.filter(
         status=SubscriptionStatus.ACTIVE
-    )
+    ).select_related('plan').prefetch_related('excluded_allergens')
 
     context = {
-        'subscriptions': Subscriptions,
+        'subscriptions': subscriptions,
     }
 
     return render(request, "lk.html", context)
