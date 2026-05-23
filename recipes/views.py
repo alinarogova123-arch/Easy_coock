@@ -1,3 +1,6 @@
+from collections import defaultdict
+from decimal import Decimal
+
 from django.contrib import messages
 from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
@@ -41,9 +44,11 @@ def registration(request):
 
 @login_required(login_url='auth')
 def lk(request):
-    subscriptions = request.user.subscriptions.filter(
-        status=SubscriptionStatus.ACTIVE
-    ).select_related('plan').prefetch_related('excluded_allergens')
+    subscriptions = (
+        request.user.subscriptions.filter(status=SubscriptionStatus.ACTIVE)
+        .select_related('plan')
+        .prefetch_related('excluded_allergens')
+    )
 
     context = {
         'subscriptions': subscriptions,
@@ -123,9 +128,49 @@ def get_daily_menu(request, subscription_id):
 
     daily_menu = generate_daily_menu(subscription)
 
+    recipes = []
+    if daily_menu.breakfast:
+        recipes.append(daily_menu.breakfast)
+    if daily_menu.lunch:
+        recipes.append(daily_menu.lunch)
+    if daily_menu.dinner:
+        recipes.append(daily_menu.dinner)
+    if daily_menu.dessert:
+        recipes.append(daily_menu.dessert)
+
+    shopping_dict = defaultdict(
+        lambda: {'amount': 0, 'price': Decimal('0'), 'unit': ''}
+    )
+    total_price = Decimal(0)
+
+    for recipe in recipes:
+        for recipe_ingredient in recipe.ingredients.select_related(
+            'ingredient'
+        ):
+            name = recipe_ingredient.ingredient.name
+            shopping_dict[name]['amount'] += recipe_ingredient.amount
+            shopping_dict[name]['price'] += recipe_ingredient.price
+            shopping_dict[name]['unit'] = recipe_ingredient.ingredient.unit
+            total_price += recipe_ingredient.price
+
+    shopping_list = []
+    for name, data in shopping_dict.items():
+        shopping_list.append(
+            {
+                'name': name,
+                'amount': data['amount'],
+                'unit': data['unit'],
+                'price': data['price'],
+            }
+        )
+
     context = {
         'subscription': subscription,
         'daily_menu': daily_menu,
+        'recipes': recipes,
+        'shopping_list': shopping_list,
+        'total_price': total_price,
+        'date': daily_menu.date,
     }
 
     return render(request, 'subscription_menu.html', context)

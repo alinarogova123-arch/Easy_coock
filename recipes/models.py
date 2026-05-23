@@ -30,11 +30,6 @@ class SubscriptionPlan(models.Model):
     duration = models.PositiveIntegerField(
         verbose_name='Срок подписки(месяцев)', unique=True
     )
-    price = models.DecimalField(
-        verbose_name='Базовая цена (руб/мес)',
-        max_digits=8,
-        decimal_places=2,
-    )
     price_coefficient = models.DecimalField(
         verbose_name='Коэффициент цены',
         max_digits=4,

@@ -21,6 +21,7 @@
                 <div class="card p-3 mb-5 foodplan__shadow">
                     <h2 class="text-center"><strong>Меню на сегодня</strong></h2>
                     <p class="text-center text-muted mb-0">{{ subscription.plan.name }} · {{ subscription.get_menu_type_display }} меню</p>
+                    <p class="text-center text-muted small"> {{ date|date:"d.m.Y." }}</p>
                 </div>
 
                 {% if daily_menu %}
@@ -49,8 +50,8 @@
                                                     <li>Ингредиенты пока не заполнены</li>
                                                 {% endfor %}
                                             </ul>
-                                            <h5>Инструкция</h5>
-                                            <p>{{ recipe.instruction }}</p>
+                                            <h5>Как готовить</h5>
+                                            <p>{{ recipe.instruction|linebreaksbr }}</p>
                                         </div>
                                     </div>
                                 {% else %}
@@ -86,7 +87,7 @@
                                                 {% endfor %}
                                             </ul>
                                             <h5>Инструкция</h5>
-                                            <p>{{ recipe.instruction }}</p>
+                                            <p>{{ recipe.instruction|linebreaksbr }}</p>
                                         </div>
                                     </div>
                                 {% else %}
@@ -122,7 +123,7 @@
                                                 {% endfor %}
                                             </ul>
                                             <h5>Инструкция</h5>
-                                            <p>{{ recipe.instruction }}</p>
+                                            <p>{{ recipe.instruction|linebreaksbr }}</p>
                                         </div>
                                     </div>
                                 {% else %}
@@ -158,7 +159,7 @@
                                                 {% endfor %}
                                             </ul>
                                             <h5>Инструкция</h5>
-                                            <p>{{ recipe.instruction }}</p>
+                                            <p>{{ recipe.instruction|linebreaksbr }}</p>
                                         </div>
                                     </div>
                                 {% else %}
@@ -172,6 +173,38 @@
                         <p class="text-muted mb-0">Меню пока не удалось сформировать.</p>
                     </div>
                 {% endif %}
+
+                <div class="card p-4 mb-4 foodplan__shadow">
+                    <h3>Список покупок</h3>
+                    {% if shopping_list %}
+                        <table class="table table-hover">
+                            <thead class="table-success">
+                                <tr>
+                                    <th>Продукт</th>
+                                    <th class="text-center">Количество</th>
+                                    <th class="text-end">Цена (руб.)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for product in shopping_list %}
+                                    <tr>
+                                        <td>{{ product.name }}</td>
+                                        <td class="text-center">{{ product.amount }} {{ product.unit }}</td>
+                                        <td class="text-end">{{ product.price|floatformat:2 }}</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                            <tfoot>
+                                <tr class="table-success fw-bold">
+                                    <td colspan="2" class="text-end">Итого:</td>
+                                    <td class="text-end">{{ total_price|floatformat:2 }} руб.</td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    {% else %}
+                        <p class="text-muted mb-0">Нет ингредиентов для отображения.</p>
+                    {% endif %}
+                </div>
             </div>
         </section>
     </main>

@@ -7,9 +7,9 @@ const MEAL_PRICES = {
 
 const DURATION_COEFFICIENTS = {
   1: 1,
-  3: 1.6,
-  6: 1.8,
-  12: 2,
+  3: 3*1.6,
+  6: 6*1.8,
+  12: 12*2,
 };
 
 const priceFormatter = new Intl.NumberFormat("ru-RU", {
