@@ -33,6 +33,20 @@ def coerce_select_bool(value):
 
 class RegistrationForm(UserCreationForm):
     email = forms.EmailField(label='Email')
+    privacy_policy_accepted = forms.BooleanField(
+        label='Политика конфиденциальности',
+        required=True,
+        error_messages={
+            'required': 'Подтвердите согласие с политикой конфиденциальности.'
+        },
+    )
+    user_agreement_accepted = forms.BooleanField(
+        label='Пользовательское соглашение',
+        required=True,
+        error_messages={
+            'required': 'Подтвердите согласие с пользовательским соглашением.'
+        },
+    )
 
     class Meta(UserCreationForm.Meta):
         model = get_user_model()

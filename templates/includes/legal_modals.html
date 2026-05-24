@@ -1,0 +1,43 @@
+{% load static %}
+
+<div class="modal fade" id="privacyPolicyModal" tabindex="-1" aria-labelledby="privacyPolicyModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="privacyPolicyModalLabel">Политика конфиденциальности</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+            </div>
+            <div class="modal-body">
+                <p>Foodplan обрабатывает имя, email и данные, которые пользователь указывает при оформлении подписки: выбранный тип меню, приёмы пищи, количество персон и аллергены.</p>
+                <p>Эти данные нужны для регистрации, входа в личный кабинет, создания подписки, подбора меню и работы менеджера.</p>
+                <p>Данные не используются для медицинских рекомендаций. Пользователь сам отвечает за проверку состава рецептов, если у него есть аллергии или ограничения питания.</p>
+                <p>Полная версия документа доступна в PDF.</p>
+            </div>
+            <div class="modal-footer">
+                <a href="{% static 'pd_agreement.pdf' %}" target="_blank" rel="noopener" class="btn btn-outline-success shadow-none foodplan_green foodplan__border_green">Открыть PDF</a>
+                <button type="button" class="btn btn-success" data-bs-dismiss="modal">Понятно</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="userAgreementModal" tabindex="-1" aria-labelledby="userAgreementModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="userAgreementModalLabel">Пользовательское соглашение</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+            </div>
+            <div class="modal-body">
+                <p>Foodplan предоставляет пользователю доступ к меню и рецептам в рамках активной подписки.</p>
+                <p>Подписка создаётся после оформления заявки и активируется менеджером. До ручной активации меню может быть недоступно.</p>
+                <p>Комментарии к рецептам отправляются на модерацию. Менеджер может скрыть комментарий, если он не относится к рецепту или нарушает правила сервиса.</p>
+                <p>Полная версия документа доступна в PDF.</p>
+            </div>
+            <div class="modal-footer">
+                <a href="{% static 'Пользовательское соглашение.pdf' %}" target="_blank" rel="noopener" class="btn btn-outline-success shadow-none foodplan_green foodplan__border_green">Открыть PDF</a>
+                <button type="button" class="btn btn-success" data-bs-dismiss="modal">Понятно</button>
+            </div>
+        </div>
+    </div>
+</div>

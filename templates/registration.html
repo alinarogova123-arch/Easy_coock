@@ -103,21 +103,48 @@
                                 <div class="invalid-feedback d-block">{{ error }}</div>
                             {% endfor %}
                         </div>
+                        <p class="mt-4 mb-2">Прочитайте и подтвердите согласие на обработку персональных данных и условия работы с сервисом.</p>
+                        <div class="form-check mb-2">
+                            <input
+                                class="form-check-input foodplan_checked-green{% if form.privacy_policy_accepted.errors %} is-invalid{% endif %}"
+                                type="checkbox"
+                                id="{{ form.privacy_policy_accepted.id_for_label }}"
+                                name="{{ form.privacy_policy_accepted.html_name }}"
+                                required
+                                {% if form.privacy_policy_accepted.value %}checked{% endif %}
+                            >
+                            <label class="form-check-label" for="{{ form.privacy_policy_accepted.id_for_label }}">
+                                Я принимаю
+                                <button type="button" class="btn btn-link link-secondary p-0 align-baseline" data-bs-toggle="modal" data-bs-target="#privacyPolicyModal">политику конфиденциальности</button>
+                            </label>
+                            {% for error in form.privacy_policy_accepted.errors %}
+                                <div class="invalid-feedback d-block">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                        <div class="form-check mb-3">
+                            <input
+                                class="form-check-input foodplan_checked-green{% if form.user_agreement_accepted.errors %} is-invalid{% endif %}"
+                                type="checkbox"
+                                id="{{ form.user_agreement_accepted.id_for_label }}"
+                                name="{{ form.user_agreement_accepted.html_name }}"
+                                required
+                                {% if form.user_agreement_accepted.value %}checked{% endif %}
+                            >
+                            <label class="form-check-label" for="{{ form.user_agreement_accepted.id_for_label }}">
+                                Я принимаю
+                                <button type="button" class="btn btn-link link-secondary p-0 align-baseline" data-bs-toggle="modal" data-bs-target="#userAgreementModal">пользовательское соглашение</button>
+                            </label>
+                            {% for error in form.user_agreement_accepted.errors %}
+                                <div class="invalid-feedback d-block">{{ error }}</div>
+                            {% endfor %}
+                        </div>
                         <div class="row mb-3">
                             <div class="col-12 col-sm-6 mt-3">
-                                <button type="submit" class="btn  shadow-nonew-100 btn-outline-success foodplan_green foodplan__border_green">Регистрация</button>
+                                <button type="submit" class="btn shadow-none w-100 btn-outline-success foodplan_green foodplan__border_green">Регистрация</button>
                             </div>
                             <div class="col-12 col-sm-6 mt-3 d-flex justify-content-center align-items-center">
                                 <small>Уже есть аккаунт? <a href="{% url 'auth' %}" class="link-dark foodplan_green">Войти</a></small>
                             </div>
-                        </div>
-                        <div class="d-flex justify-content-start" style="margin-top: 20px";>Прочитайте и подтвердите согласие на обработку        персональных данных и условия работы с сервисом.
-                        </div>
-                        <div class="d-flex justify-content-start" style="margin-top: 20px; margin-left: 20px;">
-                            <input class="form-check-input me-1 foodplan_checked-green" type="checkbox"><h6 class="     link-secondary text-center"><a href="{% static 'pd_agreement.pdf' %}" class="link-secondary     me-2">Политика конфиденциальности</a>
-                        </div>
-                        <div class="d-flex justify-content-start" style="margin-top: 10px; margin-bottom: 10px; margin-left: 20px;">
-                            <input class="form-check-input me-1 foodplan_checked-green" type="checkbox"><h6 class="     link-secondary text-center"><a href="{% static 'Пользовательское соглашение.pdf' %}" class="    link-secondary me-2">Пользовательское соглашение</a>
                         </div>
                     </form>
                 </div>
@@ -141,8 +168,8 @@
     <footer class="footer pt-2" style="border-top: 1px solid lightgray;">
         <div class="container d-flex flex-row justify-content-center mb-2">
             <small class="text-center">
-                <h6>© Девман2022. Все права защищены. © Devman2022. All right reserved.</h6><a href="#"
-                    class="link-secondary">Политика конфиденциальности</a>
+                <h6>© Девман2022. Все права защищены. © Devman2022. All right reserved.</h6>
+                <button type="button" class="btn btn-link link-secondary p-0 align-baseline" data-bs-toggle="modal" data-bs-target="#privacyPolicyModal">Политика конфиденциальности</button>
             </small>
         </div>
     </footer>
