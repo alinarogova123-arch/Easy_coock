@@ -1,16 +1,33 @@
+# Django
 SECRET_KEY = 'Ваш-секретный_ключ_проекта'
 DEBUG = 'Режим_отладки_только_для_разработки'
 ALLOWED_HOSTS = 'Разрешенные_хосты_через_запятую'
 CSRF_TRUSTED_ORIGINS = 'https://example.com,https://www.example.com'
+
+# Статика и медиа(обычно не треубется менять)
 STATIC_URL = 'Путь_к_статике_проекта_если_нужно_поменять'
 STATIC_ROOT = 'Папка_собранной_статики_на_сервере'
 MEDIA_URL = 'Путь_к_медиа_проекта_если_нужно_поменять'
 MEDIA_ROOT = 'Папка_загруженных_медиа_на_сервере'
+
+# База данных (по умолчанию SQLite)
 SQLITE_NAME = 'Путь_к_sqlite_базе_на_сервере'
+
+# Цены на приёмы пищи (руб/мес/чел)
 BREAKFAST_PRICE = 'Цена_на_завтрак_без_кавычек'
 LUNCH_PRICE = 'Цена_на_обед_без_кавычек'
 DINNER_PRICE = 'Цена_на_ужин_без_кавычек'
 DESSERT_PRICE = 'Цена_на_десерт_без_кавычек'
+
+# ЮKassa (для приёма платежей)
 YOOKASSA_SHOP_ID = 'ID_тестового_магазина_ЮKassa'
 YOOKASSA_SECRET_KEY = 'Секретный_ключ_тестового_магазина_ЮKassa'
 YOOKASSA_RETURN_URL = 'http://127.0.0.1:8000/payment/callback/'
+
+# Настройки безопасности (для продакшена обязательно!)
+CSRF_COOKIE_SECURE = False
+SESSION_COOKIE_SECURE = False
+SECURE_SSL_REDIRECT = False
+SECURE_HSTS_SECONDS = 0
+SECURE_HSTS_INCLUDE_SUBDOMAINS = False
+SECURE_HSTS_PRELOAD = False
