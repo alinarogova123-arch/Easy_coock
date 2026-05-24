@@ -1,14 +1,16 @@
 from decimal import ROUND_HALF_UP, Decimal
 
+from django.conf import settings
+
 from ..models import FoodType
 from .promo import apply_promo_code
 from .validators import MONEY_QUANT, normalize_food_types
 
 MEAL_PRICES = {
-    FoodType.BREAKFAST: Decimal('200.00'),
-    FoodType.LUNCH: Decimal('300.00'),
-    FoodType.DINNER: Decimal('400.00'),
-    FoodType.DESSERT: Decimal('100.00'),
+    FoodType.BREAKFAST: Decimal(str(settings.BREAKFAST_PRICE)),
+    FoodType.LUNCH: Decimal(str(settings.LUNCH_PRICE)),
+    FoodType.DINNER: Decimal(str(settings.DINNER_PRICE)),
+    FoodType.DESSERT: Decimal(str(settings.DESSERT_PRICE)),
 }
 
 

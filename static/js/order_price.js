@@ -1,22 +1,10 @@
-const MEAL_PRICES = {
-  breakfast: 200,
-  lunch: 300,
-  dinner: 400,
-  dessert: 100,
-};
-
-const DURATION_COEFFICIENTS = {
-  1: 1,
-  3: 3*1.6,
-  6: 6*1.8,
-  12: 12*2,
-};
-
 const priceFormatter = new Intl.NumberFormat("ru-RU", {
   maximumFractionDigits: 0,
 });
 
 function getSelectedMealsPrice() {
+  if (!window.FOOD_PRICES) return 0;
+
   const mealSelects = document.querySelectorAll(".js-meal-select");
   let mealsPrice = 0;
 
@@ -25,17 +13,19 @@ function getSelectedMealsPrice() {
       return;
     }
 
-    mealsPrice += MEAL_PRICES[select.dataset.meal] || 0;
+    mealsPrice += window.FOOD_PRICES[select.dataset.meal] || 0;
   });
 
   return mealsPrice;
 }
 
 function getDurationCoefficient() {
+  if (!window.FOOD_PRICES) return 1;
+
   const durationSelect = document.querySelector("#plan-duration");
   const selectedDuration = durationSelect ? durationSelect.value : "1";
 
-  return DURATION_COEFFICIENTS[selectedDuration] || DURATION_COEFFICIENTS[1];
+  return window.FOOD_PRICES.coefficients[selectedDuration] || 1;
 }
 
 function updateOrderPrice() {

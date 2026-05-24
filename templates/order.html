@@ -3,6 +3,15 @@
 
 {% block title %}Foodplan 2021 - Меню на неделю FOODPLAN{% endblock %}
 {% block content %}
+    <script>
+        window.FOOD_PRICES = {
+            breakfast: {{ breakfast_price }},
+            lunch: {{ lunch_price }},
+            dinner: {{ dinner_price }},
+            dessert: {{ dessert_price }},
+            coefficients: {{ price_coefficients|safe }}
+        }
+    </script>
     <main style="margin-top: calc(2rem + 85px);">
         <section>
             <div class="container">
@@ -72,10 +81,11 @@
                             <th scope="row" class="text-start">Срок</th>
                             <td>
                                 <select name="plan_duration" id="plan-duration" class="form-select">
-                                    <option value="1" {% if order_values.plan_duration == '1' %}selected{% endif %}>1 мес.</option>
-                                    <option value="3" {% if order_values.plan_duration == '3' %}selected{% endif %}>3 мес.</option>
-                                    <option value="6" {% if order_values.plan_duration == '6' %}selected{% endif %}>6 мес.</option>
-                                    <option value="12" {% if order_values.plan_duration == '12' %}selected{% endif %}>12 мес.</option>
+                                    {% for plan in subscription_plans %}
+                                        <option value="{{ plan.duration }}" {% if order_values.plan_duration == plan.duration %}selected{% endif %}>
+                                            {{ plan.name }}
+                                        </option>
+                                    {% endfor %}
                                 </select>
                             </td>
                         </tr>

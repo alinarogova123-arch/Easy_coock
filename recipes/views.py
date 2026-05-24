@@ -1,6 +1,7 @@
 from collections import defaultdict
 from decimal import Decimal
 
+from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
@@ -8,7 +9,13 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_POST
 
 from .forms import CommentForm, LoginForm, OrderForm, RegistrationForm
-from .models import Allergen, Recipe, Subscription, SubscriptionStatus
+from .models import (
+    Allergen,
+    Recipe,
+    Subscription,
+    SubscriptionPlan,
+    SubscriptionStatus,
+)
 from .services.menu_generator import generate_daily_menu
 
 
@@ -99,7 +106,7 @@ def get_order(request):
 
     order_values = {
         'menu_type': request.POST.get('menu_type', 'classic'),
-        'plan_duration': request.POST.get('plan_duration', '1'),
+        'plan_duration': int(request.POST.get('plan_duration', '1')),
         'has_breakfast': request.POST.get('has_breakfast', '1'),
         'has_lunch': request.POST.get('has_lunch', '1'),
         'has_dinner': request.POST.get('has_dinner', '1'),
@@ -108,11 +115,25 @@ def get_order(request):
         'promo_code': request.POST.get('promo_code', ''),
     }
 
+    subscription_plans = SubscriptionPlan.objects.filter(
+        is_active=True
+    ).order_by('duration')
+    price_coefficients = {
+        str(plan.duration): float(plan.price_coefficient) * plan.duration
+        for plan in subscription_plans
+    }
+
     context = {
         'form': form,
         'order_values': order_values,
         'allergens': Allergen.objects.order_by('name'),
         'selected_allergen_ids': request.POST.getlist('excluded_allergens'),
+        'breakfast_price': settings.BREAKFAST_PRICE,
+        'lunch_price': settings.LUNCH_PRICE,
+        'dinner_price': settings.DINNER_PRICE,
+        'dessert_price': settings.DESSERT_PRICE,
+        'price_coefficients': price_coefficients,
+        'subscription_plans': subscription_plans,
     }
     return render(request, "order.html", context)
 

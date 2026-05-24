@@ -6,8 +6,9 @@ env.read_env()
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = (
-    'django-insecure-fn)odhs9c(6agcu8&=pdde(w8l3@lka7*g(w7$h@gbnu569vr9'
+SECRET_KEY = env.str(
+    'SECRET_KEY',
+    'django-insecure-fn)odhs9c(6agcu8&=pdde(w8l3@lka7*g(w7$h@gbnu569vr9',
 )
 
 DEBUG = env.bool('DEBUG', True)
@@ -55,9 +56,6 @@ TEMPLATES = [
 WSGI_APPLICATION = 'foodplan.wsgi.application'
 
 
-# Database
-# https://docs.djangoproject.com/en/6.0/ref/settings/#databases
-
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
@@ -65,9 +63,6 @@ DATABASES = {
     }
 }
 
-
-# Password validation
-# https://docs.djangoproject.com/en/6.0/ref/settings/#auth-password-validators
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -85,9 +80,6 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 
-# Internationalization
-# https://docs.djangoproject.com/en/6.0/topics/i18n/
-
 LANGUAGE_CODE = 'ru-ru'
 
 TIME_ZONE = 'Europe/Moscow'
@@ -97,14 +89,17 @@ USE_I18N = True
 USE_TZ = True
 
 
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/6.0/howto/static-files/
-
-STATIC_URL = '/static/'
+STATIC_URL = env.str('STATIC_URL', '/static/')
 STATICFILES_DIRS = [
     BASE_DIR / 'static',
 ]
 
 
-MEDIA_URL = '/media/'
+MEDIA_URL = env.str('MEDIA_URL', '/media/')
 MEDIA_ROOT = BASE_DIR / 'media'
+
+
+BREAKFAST_PRICE = env.int('BREAKFAST_PRICE', 200)
+LUNCH_PRICE = env.int('LUNCH_PRICE', 300)
+DINNER_PRICE = env.int('DINNER_PRICE', 400)
+DESSERT_PRICE = env.int('DESSERT_PRICE', 100)
