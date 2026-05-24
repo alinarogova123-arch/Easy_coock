@@ -22,7 +22,7 @@ urlpatterns = (
         path(
             'recipe/<int:recipe_id>/',
             views.recipe_detail,
-            name='recipe_detail',
+            name='recipe',
         ),
     ]
     + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

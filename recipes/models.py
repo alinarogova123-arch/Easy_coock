@@ -361,9 +361,7 @@ class Comment(models.Model):
         auto_now_add=True,
         db_index=True,
     )
-    is_approved = models.BooleanField(
-        verbose_name='Одобрен',
-    )
+    is_approved = models.BooleanField(verbose_name='Одобрен', default=False)
 
     class Meta:
         verbose_name = 'Комментарий'
