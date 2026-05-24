@@ -13,7 +13,7 @@
                             {% if recipe.image %}
                                 <img src="{{ recipe.image.url }}" class="img-fluid rounded" alt="{{ recipe.name }}">
                             {% else %}
-                                <img src="{% static 'images/circle1' %}" class="img-fluid rounded" alt="Нет фото">
+                                <img src="{% static 'images/circle1.png' %}" class="img-fluid rounded" alt="Нет фото">
                             {% endif %}
                         </div>
                     </div>
@@ -67,7 +67,7 @@
                                 </div>
                             {% else %}
                                 <div class="alert alert-info">
-                                    <a href="{% url 'auth' %}" class"alert-link">Войдите</a>, чтобы оставить комментарий
+                                    <a href="{% url 'auth' %}" class="alert-link">Войдите</a>, чтобы оставить комментарий
                                 </div>
                             {% endif %}
 
@@ -96,4 +96,3 @@
         </section>
     </main>
 {% endblock %}
-

@@ -196,15 +196,15 @@ class RecipeAdmin(admin.ModelAdmin):
         (
             'Медиа',
             {
-                'fields': ('images', 'image_preview'),
+                'fields': ('image', 'image_preview'),
             },
         ),
     )
 
     def image_preview(self, obj):
-        if obj.images:
+        if obj.image:
             return format_html(
-                '<img src="{}" style="max-width: 200px;" />', obj.images.url
+                '<img src="{}" style="max-width: 200px;" />', obj.image.url
             )
 
 

@@ -5,7 +5,9 @@ from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
+from django.db.models import Q
 from django.shortcuts import get_object_or_404, redirect, render
+from django.utils import timezone
 from django.views.decorators.http import require_POST
 
 from .forms import CommentForm, LoginForm, OrderForm, RegistrationForm
@@ -80,7 +82,7 @@ def get_card(request):
         recipe_for_card['ingredients'] = recipe.ingredients.all()
         all_calories = Recipe.objects.get(id=recipe.id).calories
         recipe_for_card['all_calories'] = all_calories
-        recipe_for_card['images'] = recipe.images.url
+        recipe_for_card['image'] = recipe.image.url if recipe.image else ''
         recipe_for_card['instruction'] = recipe.instruction
         recipes_for_card.append(recipe_for_card)
 
@@ -197,13 +199,43 @@ def get_daily_menu(request, subscription_id):
     return render(request, 'subscription_menu.html', context)
 
 
+def can_view_recipe(user, recipe):
+    if user.is_staff:
+        return True
+
+    today_date = timezone.now().date()
+    return (
+        Subscription.objects.filter(
+            user=user,
+            status=SubscriptionStatus.ACTIVE,
+            daily_menus__date=today_date,
+        )
+        .filter(
+            Q(daily_menus__breakfast=recipe)
+            | Q(daily_menus__lunch=recipe)
+            | Q(daily_menus__dinner=recipe)
+            | Q(daily_menus__dessert=recipe)
+        )
+        .exists()
+    )
+
+
+@login_required(login_url='auth')
 def recipe_detail(request, recipe_id):
     recipe = get_object_or_404(Recipe, id=recipe_id)
+
+    if not can_view_recipe(request.user, recipe):
+        messages.error(
+            request,
+            'Этот рецепт доступен только из вашего активного меню на сегодня.',
+        )
+        return redirect('lk')
+
     comments = recipe.comments.filter(is_approved=True).select_related(
         'author'
     )
 
-    if request.method == 'POST' and request.user.is_authenticated:
+    if request.method == 'POST':
         form = CommentForm(request.POST)
         if form.is_valid():
             comment = form.save(commit=False)
