@@ -57,18 +57,26 @@ class SubscriptionAdmin(admin.ModelAdmin):
         'plan',
         'persons',
         'status',
+        'is_paid',
+        'payment_status_display',
         'total_paid',
         'activated_at',
         'expires_at',
     ]
-    list_filter = ['status', 'plan']
-    search_fields = ['user__username', 'user__email']
+    list_filter = ['status', 'is_paid', 'payment_status', 'plan']
+    search_fields = ['user__username', 'user__email', 'payment_id']
     raw_id_fields = ['user']
     readonly_fields = [
         'status',
         'created_at',
         'activated_at',
         'expires_at',
+        'payment_id',
+        'payment_status',
+        'payment_status_display',
+        'is_paid',
+        'paid_at',
+        'confirmation_url',
         'total_before_discount',
         'discount_amount',
         'total_paid',
@@ -93,6 +101,12 @@ class SubscriptionAdmin(admin.ModelAdmin):
         'created_at',
         'activated_at',
         'expires_at',
+        'payment_id',
+        'payment_status',
+        'payment_status_display',
+        'is_paid',
+        'paid_at',
+        'confirmation_url',
         'promo_code',
         'total_before_discount',
         'discount_amount',
@@ -162,6 +176,11 @@ class SubscriptionAdmin(admin.ModelAdmin):
                 error_message + ' | '.join(failed_messages[:5]),
                 level=messages.ERROR,
             )
+
+    def payment_status_display(self, obj):
+        return obj.payment_status_text()
+
+    payment_status_display.short_description = 'Статус оплаты'
 
 
 class RecipeIngredientInline(admin.TabularInline):

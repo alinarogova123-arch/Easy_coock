@@ -14,6 +14,12 @@ urlpatterns = (
         path('registration/', views.registration, name='registration'),
         path('lk/', views.lk, name='lk'),
         path('order/', views.get_order, name='order'),
+        path('payment/create/', views.payment_create, name='payment_create'),
+        path(
+            'payment/callback/',
+            views.payment_callback,
+            name='payment_callback',
+        ),
         path(
             'subscription/<int:subscription_id>/menu/',
             views.get_daily_menu,

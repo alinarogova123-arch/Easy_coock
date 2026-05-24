@@ -1,13 +1,15 @@
 from collections import defaultdict
-from decimal import Decimal
+from decimal import Decimal, InvalidOperation
 
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
+from django.core.exceptions import ValidationError
 from django.db.models import Q
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
+from django.views.decorators.http import require_GET
 from django.views.decorators.http import require_POST
 
 from .forms import CommentForm, LoginForm, OrderForm, RegistrationForm
@@ -19,6 +21,14 @@ from .models import (
     SubscriptionStatus,
 )
 from .services.menu_generator import generate_daily_menu
+from .services.payments import (
+    PaymentError,
+    create_payment,
+    get_payment_info,
+    update_subscription_from_payment,
+)
+from .services.subscriptions import activate_subscription
+from .services.validators import MONEY_QUANT
 
 
 def index(request):
@@ -58,9 +68,16 @@ def lk(request):
         .select_related('plan')
         .prefetch_related('excluded_allergens')
     )
+    pending_subscriptions = (
+        request.user.subscriptions.filter(status=SubscriptionStatus.PENDING)
+        .select_related('plan')
+        .prefetch_related('excluded_allergens')
+        .order_by('-created_at')
+    )
 
     context = {
         'subscriptions': subscriptions,
+        'pending_subscriptions': pending_subscriptions,
     }
 
     return render(request, "lk.html", context)
@@ -95,14 +112,15 @@ def get_order(request):
         form = OrderForm(request.POST)
         if form.is_valid():
             subscription = form.save(request.user)
+            request.session['pending_subscription_id'] = subscription.id
             messages.success(
                 request,
                 (
                     'Заявка на подписку создана. '
-                    f'Статус: {subscription.get_status_display()}.'
+                    'Сейчас перейдём к оплате.'
                 ),
             )
-            return redirect('order')
+            return redirect('payment_create')
     else:
         form = OrderForm()
 
@@ -138,6 +156,145 @@ def get_order(request):
         'subscription_plans': subscription_plans,
     }
     return render(request, "order.html", context)
+
+
+def build_payment_return_url(subscription_id):
+    separator = '&' if '?' in settings.YOOKASSA_RETURN_URL else '?'
+    return f'{settings.YOOKASSA_RETURN_URL}{separator}subscription_id={subscription_id}'
+
+
+def get_payment_subscription_id(request):
+    return (
+        request.GET.get('subscription_id')
+        or request.session.get('pending_subscription_id')
+    )
+
+
+def clear_pending_subscription_session(request, subscription):
+    if request.session.get('pending_subscription_id') == subscription.id:
+        del request.session['pending_subscription_id']
+
+
+def payment_amount_matches_subscription(subscription):
+    if not subscription.payment_id:
+        return False
+
+    try:
+        payment_info = get_payment_info(subscription.payment_id)
+        payment_amount = Decimal(str(payment_info.get('amount')))
+    except (PaymentError, InvalidOperation, TypeError):
+        return False
+
+    return (
+        payment_amount.quantize(MONEY_QUANT)
+        == subscription.total_paid.quantize(MONEY_QUANT)
+    )
+
+
+@login_required(login_url='auth')
+@require_GET
+def payment_create(request):
+    subscription_id = get_payment_subscription_id(request)
+    if not subscription_id:
+        messages.error(request, 'Подписка для оплаты не найдена.')
+        return redirect('order')
+
+    subscription = get_object_or_404(
+        Subscription,
+        id=subscription_id,
+        user=request.user,
+    )
+
+    if subscription.status == SubscriptionStatus.ACTIVE:
+        clear_pending_subscription_session(request, subscription)
+        messages.info(request, 'Подписка уже активна.')
+        return redirect('lk')
+
+    if subscription.status != SubscriptionStatus.PENDING:
+        clear_pending_subscription_session(request, subscription)
+        messages.error(request, 'Эту подписку уже нельзя оплатить.')
+        return redirect('lk')
+
+    if subscription.is_paid:
+        try:
+            activate_subscription(subscription)
+        except ValidationError as error:
+            messages.error(request, '; '.join(error.messages))
+        else:
+            clear_pending_subscription_session(request, subscription)
+            messages.success(request, 'Оплата уже получена. Подписка активирована.')
+        return redirect('lk')
+
+    if (
+        subscription.payment_status in ('pending', 'waiting_for_capture')
+        and subscription.confirmation_url
+    ):
+        if payment_amount_matches_subscription(subscription):
+            return redirect(subscription.confirmation_url)
+
+        subscription.payment_id = None
+        subscription.payment_status = ''
+        subscription.confirmation_url = ''
+        subscription.save(
+            update_fields=['payment_id', 'payment_status', 'confirmation_url']
+        )
+
+    try:
+        payment_info = create_payment(
+            subscription,
+            return_url=build_payment_return_url(subscription.id),
+        )
+    except PaymentError as error:
+        messages.error(request, f'Ошибка оплаты: {error}')
+        return redirect('order')
+
+    request.session['pending_subscription_id'] = subscription.id
+    return redirect(payment_info['confirmation_url'])
+
+
+@login_required(login_url='auth')
+@require_GET
+def payment_callback(request):
+    subscription_id = get_payment_subscription_id(request)
+    if not subscription_id:
+        messages.warning(request, 'Подписка для проверки оплаты не найдена.')
+        return redirect('order')
+
+    subscription = get_object_or_404(
+        Subscription,
+        id=subscription_id,
+        user=request.user,
+    )
+
+    if not subscription.payment_id:
+        clear_pending_subscription_session(request, subscription)
+        messages.error(request, 'Платёж для подписки не найден.')
+        return redirect('order')
+
+    try:
+        payment_info = get_payment_info(subscription.payment_id)
+    except PaymentError as error:
+        messages.error(request, f'Ошибка проверки платежа: {error}')
+        return redirect('lk')
+
+    subscription = update_subscription_from_payment(subscription, payment_info)
+
+    if subscription.is_paid:
+        try:
+            activate_subscription(subscription)
+        except ValidationError as error:
+            messages.error(request, '; '.join(error.messages))
+        else:
+            clear_pending_subscription_session(request, subscription)
+            messages.success(request, 'Оплата получена. Подписка активирована.')
+        return redirect('lk')
+
+    messages.info(
+        request,
+        f'Платёж пока не завершён. Статус: {subscription.payment_status_text()}',
+    )
+    request.session['pending_subscription_id'] = subscription.id
+    return redirect('lk')
 
 
 @login_required

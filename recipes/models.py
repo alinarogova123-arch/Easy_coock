@@ -142,6 +142,14 @@ class RecipeIngredient(models.Model):
 
 
 class Subscription(models.Model):
+    PAYMENT_STATUS_LABELS = {
+        '': 'Оплата не начата',
+        'pending': 'Ожидает оплату',
+        'waiting_for_capture': 'Оплата подтверждается',
+        'succeeded': 'Оплата получена',
+        'canceled': 'Оплата отменена',
+    }
+
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
@@ -189,6 +197,29 @@ class Subscription(models.Model):
         null=True,
         blank=True,
     )
+    payment_id = models.CharField(
+        verbose_name='ID платежа в YooKassa',
+        max_length=100,
+        blank=True,
+        null=True,
+    )
+    payment_status = models.CharField(
+        verbose_name='Статус оплаты YooKassa',
+        max_length=50,
+        blank=True,
+        default='',
+    )
+    is_paid = models.BooleanField(verbose_name='Оплачено', default=False)
+    paid_at = models.DateTimeField(
+        verbose_name='Дата оплаты',
+        null=True,
+        blank=True,
+    )
+    confirmation_url = models.URLField(
+        verbose_name='Ссылка на оплату',
+        blank=True,
+        null=True,
+    )
 
     promo_code = models.ForeignKey(
         'PromoCode',
@@ -224,6 +255,12 @@ class Subscription(models.Model):
 
     def __str__(self):
         return f'{self.user.username} - {self.plan.name} ({self.get_status_display()})'
+
+    def payment_status_text(self):
+        return self.PAYMENT_STATUS_LABELS.get(
+            self.payment_status,
+            'Статус оплаты уточняется',
+        )
 
     @property
     def selected_food_types(self):

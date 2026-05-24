@@ -26,6 +26,11 @@
                             <strong><small><a href="#" class="link-secondary fw-light"></a></small></strong>
                         </h4>
                         <h2 class="text-center"><strong>Личный кабинет</strong></h2>
+                        {% for message in messages %}
+                            <div class="alert alert-info mt-3 mb-0" role="alert">
+                                {{ message }}
+                            </div>
+                        {% endfor %}
                     </div>
                     
                     <div class="card col-12 col-md-2 p-3 mb-3 d-flex flex-column align-items-center foodplan__shadow">
@@ -87,7 +92,38 @@
                                     </form>
                                 </div>
                                 <div class="tab-pane fade show active" id="menu">
+                                    {% if pending_subscriptions %}
+                                        <h4 class="mb-3">Ожидают оплаты</h4>
+                                        {% for subscription in pending_subscriptions %}
+                                            <div class="row mb-4">
+                                                <div class="col-2">
+                                                    <img src="{% static 'images/circle1.png' %}" alt="" class="w-100">
+                                                </div>
+                                                <div class="col-10 col-md-10">
+                                                    <div class="row">
+                                                        <div class="col-12">
+                                                            <h2>{{ subscription.plan.name }}</h2>
+                                                        </div>
+                                                        <div class="col-md-12 col-lg-8">
+                                                            <h6>{{ subscription.get_menu_type_display }} меню на {{ subscription.plan.duration }} мес.</h6>
+                                                            <small class="text-muted">Статус оплаты: {{ subscription.payment_status_text }}</small>
+                                                        </div>
+                                                        <div class="col-md-12 col-lg-4 text-muted d-flex flex-column justify-content-between">
+                                                            <div class="d-flex flex-row justify-content-between">
+                                                                <small>Итого: </small><small>{{ subscription.total_paid }} руб.</small>
+                                                            </div>
+                                                            <div class="d-flex flex-row justify-content-between">
+                                                                <small>Приёмов пищи: </small><small>{{ subscription.selected_food_types|length }}</small>
+                                                            </div>
+                                                        </div>
+                                                        <a class="btn btn-outline-success me-2 mt-3 shadow-none foodplan_green foodplan__border_green" href="{% url 'payment_create' %}?subscription_id={{ subscription.id }}">Перейти к оплате</a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        {% endfor %}
+                                    {% endif %}
                                     {% if subscriptions %}
+                                        <h4 class="mb-3">Активные подписки</h4>
                                         {% for subscription in subscriptions %}
                                             <div class="row mb-4">
                                                 <div class="col-2">
@@ -129,7 +165,7 @@
                                                 Оформить новую подписку
                                             </a>
                                         </div>
-                                    {% else %}
+                                    {% elif not pending_subscriptions %}
                                         <div class="text-center py-4">
                                             <h5>Активной подписки пока нет</h5>
                                             <a class="btn btn-outline-success shadow-none foodplan_green foodplan__border_green mt-3" href="{% url 'order' %}">Оформить подписку</a>
