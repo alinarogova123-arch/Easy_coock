@@ -41,6 +41,12 @@
                                             </ul>
                                             <h5>Как готовить</h5>
                                             <p>{{ recipe.instruction|linebreaksbr }}</p>
+
+                                            <div class="mt-3">
+                                                <a href="{% url 'recipe' recipe.id %}" class="btn btn-outline-success shadow-none foodplan_green foodplan__border_green">
+                                                    Посмотреть Комментарии
+                                                </a>
+                                            </div>
                                         </div>
                                     </div>
                                 {% else %}
@@ -77,6 +83,12 @@
                                             </ul>
                                             <h5>Инструкция</h5>
                                             <p>{{ recipe.instruction|linebreaksbr }}</p>
+
+                                            <div class="mt-3">
+                                                <a href="{% url 'recipe' recipe.id %}" class="btn btn-outline-success shadow-none foodplan_green foodplan__border_green">
+                                                    Посмотреть Комментарии
+                                                </a>
+                                            </div>
                                         </div>
                                     </div>
                                 {% else %}
@@ -113,6 +125,12 @@
                                             </ul>
                                             <h5>Инструкция</h5>
                                             <p>{{ recipe.instruction|linebreaksbr }}</p>
+
+                                            <div class="mt-3">
+                                                <a href="{% url 'recipe' recipe.id %}" class="btn btn-outline-success shadow-none foodplan_green foodplan__border_green">
+                                                    Посмотреть Комментарии
+                                                </a>
+                                            </div>
                                         </div>
                                     </div>
                                 {% else %}
@@ -149,6 +167,12 @@
                                             </ul>
                                             <h5>Инструкция</h5>
                                             <p>{{ recipe.instruction|linebreaksbr }}</p>
+
+                                            <div class="mt-3">
+                                                <a href="{% url 'recipe' recipe.id %}" class="btn btn-outline-success shadow-none foodplan_green foodplan__border_green">
+                                                    Посмотреть Комментарии
+                                                </a>
+                                            </div>
                                         </div>
                                     </div>
                                 {% else %}
