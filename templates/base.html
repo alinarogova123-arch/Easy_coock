@@ -12,6 +12,7 @@
     <title>{% block title %}Default title{% endblock %}</title>
 </head>
 <body>
+    {% block header %}
     <header>
         <nav class="navbar navbar-expand-md navbar-light fixed-top navbar__opacity">
             <div class="container">
@@ -22,9 +23,11 @@
             </div>
         </nav>
     </header>
+    {% endblock %}
     {% block content %}
     {% endblock %}
 
+    {% block footer %}
     <footer class="footer pt-2" style="border-top: 1px solid lightgray;">
         <div class="container d-flex flex-row justify-content-center mb-2">
             <small class="text-center">
@@ -33,6 +36,7 @@
             </small>
         </div>
     </footer>
+    {% endblock %}
 
     {% include "includes/legal_modals.html" %}
 

@@ -1,14 +1,16 @@
 {% extends "base.html" %}
+{% load static %}
 
 {% block title %}Foodplan 2026 - Меню на неделю FOODPLAN{% endblock %}
+{% block header %}{% endblock %}
+{% block footer %}{% endblock %}
 {% block content %}
 
-<body>
     <header>
         <nav class="navbar navbar-expand-md navbar-light fixed-top navbar__opacity">
             <div class="container">
                 <a class="navbar-brand" href="{% url 'home' %}">
-                    <img src="./../media/img/logo.8d8f24edbb5f.svg" height="55" width="189" alt="">
+                    <img src="{% static 'images/logo.8d8f24edbb5f.svg' %}" height="55" width="189" alt="">
                 </a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse1"
                     aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -97,11 +99,11 @@
         <nav class="navbar navbar-expand-md navbar-light mt-5">
             <div class="container p-2">
                 <a class="navbar-brand" href="#">
-                    <img src="./../media/img/logo.8d8f24edbb5f.svg" height="55" width="189" alt="">
+                    <img src="{% static 'images/logo.8d8f24edbb5f.svg' %}" height="55" width="189" alt="">
                 </a>
                 <div class="footer__sideBtns d-flex">
                     <a href="#">
-                        <img src="./../media/img/vk.png" height="38" width="auto" alt="">
+                        <img src="{% static 'images/vk.png' %}" height="38" width="auto" alt="">
                     </a>
                 </div>
             </div>
