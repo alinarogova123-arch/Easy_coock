@@ -1,0 +1,17 @@
+name: easy-coock
+
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    env_file:
+      - .env
+    command: gunicorn foodplan.wsgi:application --bind 0.0.0.0:8000
+    ports:
+      - "127.0.0.1:8000:8000"
+    volumes:
+      - /srv/easy-coock/data:/app/data
+      - /var/www/easy-coock/static:/app/staticfiles
+      - /var/www/easy-coock/media:/app/media

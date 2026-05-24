@@ -14,6 +14,8 @@ SECRET_KEY = env.str(
 DEBUG = env.bool('DEBUG', True)
 
 ALLOWED_HOSTS = env.list('ALLOWED_HOSTS', default=['localhost', '127.0.0.1'])
+CSRF_TRUSTED_ORIGINS = env.list('CSRF_TRUSTED_ORIGINS', default=[])
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 
 INSTALLED_APPS = [
@@ -59,7 +61,7 @@ WSGI_APPLICATION = 'foodplan.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'NAME': env.str('SQLITE_NAME', str(BASE_DIR / 'db.sqlite3')),
     }
 }
 
@@ -90,13 +92,14 @@ USE_TZ = True
 
 
 STATIC_URL = env.str('STATIC_URL', '/static/')
+STATIC_ROOT = env.str('STATIC_ROOT', str(BASE_DIR / 'staticfiles'))
 STATICFILES_DIRS = [
     BASE_DIR / 'static',
 ]
 
 
 MEDIA_URL = env.str('MEDIA_URL', '/media/')
-MEDIA_ROOT = BASE_DIR / 'media'
+MEDIA_ROOT = env.str('MEDIA_ROOT', str(BASE_DIR / 'media'))
 
 
 BREAKFAST_PRICE = env.int('BREAKFAST_PRICE', 200)
