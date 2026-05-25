@@ -89,23 +89,6 @@ def logout_user(request):
     return redirect('home')
 
 
-def get_card(request):
-    recipes = Recipe.objects.all()[:3]
-    recipes_for_card = []
-    for recipe in recipes:
-        recipe_for_card = {}
-        all_calories = 0
-        recipe_for_card['name'] = recipe.name
-        recipe_for_card['ingredients'] = recipe.ingredients.all()
-        all_calories = Recipe.objects.get(id=recipe.id).calories
-        recipe_for_card['all_calories'] = all_calories
-        recipe_for_card['image'] = recipe.image.url if recipe.image else ''
-        recipe_for_card['instruction'] = recipe.instruction
-        recipes_for_card.append(recipe_for_card)
-
-    return render(request, "card.html", {"recipes_for_card": recipes_for_card})
-
-
 @login_required(login_url='auth')
 def get_order(request):
     if request.method == 'POST':
